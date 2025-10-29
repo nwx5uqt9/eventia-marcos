@@ -1,0 +1,8 @@
+<div class="sidebar-eventia" id="sidebar" [class.collapsed]="isSidebarCollapsed">
+  <app-sidebar [collapsed]="isSidebarCollapsed" ></app-sidebar>
+</div>
+
+<div class="main-content-eventia" id="mainContent" [class.expanded]="isSidebarCollapsed">
+  <app-navbar-admin></app-navbar-admin>
+  <router-outlet></router-outlet>
+</div>

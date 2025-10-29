@@ -1,0 +1,146 @@
+@startuml
+class com.Pagina_Eventos.Pagina_Eventos.Entidad.TipoEvento {
+- Integer id
+- String nombre
++ Integer getId()
++ void setId(Integer)
++ String getNombre()
++ void setNombre(String)
+}
+
+
+class com.Pagina_Eventos.Pagina_Eventos.Entidad.Eventos {
+- Integer id
+- String nombre
+- String descripcion
+- LocalDate fecha
+- TipoEvento tipoEvento
+- Organizador organizador
+- EstadoEvento estadoEvento
++ Integer getId()
++ void setId(Integer)
++ String getNombre()
++ void setNombre(String)
++ String getDescripcion()
++ void setDescripcion(String)
++ LocalDate getFecha()
++ void setFecha(LocalDate)
++ TipoEvento getTipoEvento()
++ void setTipoEvento(TipoEvento)
++ Organizador getOrganizador()
++ void setOrganizador(Organizador)
++ EstadoEvento getEstadoEvento()
++ void setEstadoEvento(EstadoEvento)
+}
+
+
+class com.Pagina_Eventos.Pagina_Eventos.Entidad.Usuario {
+- Integer id
+- String nombre
+- String apellido
+- String email
+- String password
+- RolUsuario rolUsuario
++ Integer getId()
++ void setId(Integer)
++ String getNombre()
++ void setNombre(String)
++ String getApellido()
++ void setApellido(String)
++ String getEmail()
++ void setEmail(String)
++ String getPassword()
++ void setPassword(String)
++ RolUsuario getRolUsuario()
++ void setRolUsuario(RolUsuario)
+}
+
+
+class com.Pagina_Eventos.Pagina_Eventos.Entidad.BoletaVenta {
+- Integer id
+- Double monto
+- String codigoPago
+- Eventos evento
+- Ubicacion ubicacion
+- Boleto boleto
++ Integer getId()
++ void setId(Integer)
++ Double getMonto()
++ void setMonto(Double)
++ String getCodigoPago()
++ void setCodigoPago(String)
++ Eventos getEvento()
++ void setEvento(Eventos)
++ Ubicacion getUbicacion()
++ void setUbicacion(Ubicacion)
++ Boleto getBoleto()
++ void setBoleto(Boleto)
+}
+
+
+class com.Pagina_Eventos.Pagina_Eventos.Entidad.Ubicacion {
+- Integer id
+- String nombre
+- String descripcion
+- int capacidad
++ Integer getId()
++ void setId(Integer)
++ String getNombre()
++ void setNombre(String)
++ String getDescripcion()
++ void setDescripcion(String)
++ int getCapacidad()
++ void setCapacidad(int)
+}
+
+
+class com.Pagina_Eventos.Pagina_Eventos.Entidad.Boleto {
+- Integer id
+- String nombre
+- Double monto
++ Integer getId()
++ void setId(Integer)
++ String getNombre()
++ void setNombre(String)
++ Double getMonto()
++ void setMonto(Double)
+}
+
+
+class com.Pagina_Eventos.Pagina_Eventos.Entidad.RolUsuario {
+- Integer id
+- String nombre
++ Integer getId()
++ void setId(Integer)
++ String getNombre()
++ void setNombre(String)
+}
+
+
+class com.Pagina_Eventos.Pagina_Eventos.Entidad.EstadoEvento {
+- Integer id
+- String nombre
++ Integer getId()
++ void setId(Integer)
++ String getNombre()
++ void setNombre(String)
+}
+
+
+class com.Pagina_Eventos.Pagina_Eventos.Entidad.Organizador {
+- Integer id
+- String nombreEmpresa
+- String descripcion
+- String telefono
++ Integer getId()
++ void setId(Integer)
++ String getNombreEmpresa()
++ void setNombreEmpresa(String)
++ String getDescripcion()
++ void setDescripcion(String)
++ String getTelefono()
++ void setTelefono(String)
+}
+
+
+@enduml

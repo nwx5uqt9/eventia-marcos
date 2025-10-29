@@ -1,0 +1,145 @@
+<div class="container p-4 pb-0">
+  <h5 class="p-0">Datos complementarios</h5>
+</div>
+<div class="p-4 pb-0 pt-0">
+  <!-- Section Filter -->
+  <form class="row g-3" name="form" id="form" #formulario="ngForm">
+    <div class="col-4"></div>
+    <div class="col-3"></div>
+    <div class="col-3"></div>
+    <div class="col-2">
+      <div class="d-flex flex-column">
+        <button class="btn btn-eventia mt-3" type="button" (click)="openModal(optionRoleUser())">
+          Nuevo Rol Usuario
+        </button>
+      </div>
+    </div>
+  </form>
+  <hr />
+  <!-- Section Table -->
+  <div class="">
+    <table class="table table-bordered">
+      <thead>
+        <tr class="text-center">
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Descripcion</th>
+          <th>Opciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- @for (item of empleados; track item) { -->
+        <!-- aca se declara la tabla obtenida -->
+        <tr *ngFor = "let c of rolusuario" class="text-end align-middle">
+          <td style="width: 100px">{{c.id}}</td>
+          <td>{{c.rol}}</td>
+          <td>{{c.descripcion}}</td>
+          <td style="width: 150px">
+            <div class="d-flex justify-content-around">
+              <button class="btn btn-warning"><i class="fa-solid fa-pencil"></i></button>
+              <button *ngIf="c.id !== null" class="btn btn-danger" (click)="deleteRol(c.id)"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+        <!-- } -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Tipo_Evento -->
+<div class="p-4 pb-0 pt-0">
+  <!-- Section Filter -->
+  <form class="row g-3" name="form" id="form" #formulario="ngForm">
+    <div class="col-4"></div>
+    <div class="col-3"></div>
+    <div class="col-3"></div>
+    <div class="col-2">
+      <div class="d-flex flex-column">
+        <button class="btn btn-eventia mt-3" type="button" (click)="openModal(optionTypeEvent())">
+          Nuevo Tipo Evento
+        </button>
+      </div>
+    </div>
+  </form>
+  <hr />
+  <!-- Section Table -->
+  <div class="">
+    <table class="table table-bordered">
+      <thead>
+        <tr class="text-center">
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Descripcion</th>
+          <th>Opciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- @for (item of empleados; track item) { -->
+        <!-- aca se declara la tabla obtenida -->
+        <tr *ngFor = "let d of tipoevento" class="text-end align-middle">
+          <td style="width: 100px">{{d.id}}</td>
+          <td>{{d.nombre}}</td>
+          <td>{{d.descripcion}}</td>
+          <td style="width: 150px">
+            <div class="d-flex justify-content-around">
+              <button class="btn btn-warning"><i class="fa-solid fa-pencil"></i></button>
+              <button *ngIf="d.id !== null" class="btn btn-danger" (click)="deleteTipo(d.id)"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+        <!-- } -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Tipo Estado_Evento -->
+<div class="p-4 pb-0 pt-0">
+  <!-- Section Filter -->
+  <form class="row g-3" name="form" id="form" #formulario="ngForm">
+    <div class="col-4"></div>
+    <div class="col-3"></div>
+    <div class="col-3"></div>
+    <div class="col-2">
+      <div class="d-flex flex-column">
+        <button class="btn btn-eventia mt-3" type="button" (click)="openModal(optionStateEvent())">
+          Estado Evento
+        </button>
+      </div>
+    </div>
+  </form>
+  <hr />
+  <!-- Section Table -->
+  <div class="">
+    <table class="table table-bordered">
+      <thead>
+        <tr class="text-center">
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Descripcion</th>
+          <th>Opciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- @for (item of empleados; track item) { -->
+        <!-- aca se declara la tabla obtenida -->
+        <tr *ngFor = "let f of estadoevento" class="text-end align-middle">
+          <td  style="width: 100px">{{f.id}}</td>
+          <td>{{f.nombre}}</td>
+          <td>{{f.descripcion}}</td>
+          <td style="width: 150px">
+            <div class="d-flex justify-content-around">
+              <button class="btn btn-warning"><i class="fa-solid fa-pencil"></i></button>
+              <button *ngIf="f.id !== null" class="btn btn-danger" (click)="deleteEstado(f.id)" ><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+        <!-- } -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal -->
+<app-modal-add-event [option]="option()"></app-modal-add-event>

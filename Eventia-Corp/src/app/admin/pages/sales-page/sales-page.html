@@ -1,0 +1,80 @@
+<div class="p-4">
+  <!-- Section Filter -->
+  <form class="row g-3" name="form" id="form" #formulario="ngForm">
+    <div class="col-4">
+      <label class="align-middle" for="codigo">Buscar: </label>
+      <div class="form-group input-group">
+        <input
+          type="text"
+          name="search"
+          class="form-control"
+          [(ngModel)]="codigo"
+          #codigo="ngModel"
+          required="true"
+          placeholder="Ingrese su Código"
+        />
+        <button class="btn btn-outline-secondary" type="button">Buscar</button>
+      </div>
+    </div>
+    <div class="col-3">
+      <label class="align-middle" for="codigo">Estado: </label>
+      <select id="inputState" class="form-select">
+        <option selected>Seleccione...</option>
+        <option>Activo</option>
+        <option>Inactivo</option>
+      </select>
+    </div>
+    <div class="col-3">
+      <label class="align-middle" for="codigo">Ubicacion: </label>
+      <select id="inputState" class="form-select">
+        <option selected>Seleccione...</option>
+        <option>Aqui</option>
+        <option>Haya</option>
+      </select>
+    </div>
+    <div class="col-2">
+      <div class="d-flex flex-column">
+        <button class="btn btn-eventia mt-3" type="button" (click)="openModal()">Nueva Venta</button>
+      </div>
+    </div>
+  </form>
+  <hr />
+  <!-- Section Table -->
+  <div class="">
+    <table class="table table-bordered">
+      <thead>
+        <tr class="text-center">
+          <th>Código</th>
+          <th>Evento</th>
+          <th>Ubicación</th>
+          <th>Usuario</th>
+          <th>Código Pago</th>
+          <th>Total</th>
+          <th>Opciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- @for (item of empleados; track item) { -->
+        <!-- aca se declara la tabla obtenida -->
+        <tr *ngFor = "let c of bventas"  class="text-end align-middle">
+          <td style="width: 100px">{{c.id}}</td>
+          <td>{{c.evento?.nombre}}</td>
+          <td>{{c.ubicacion?.nombre}}</td>
+          <td>{{c.usuario?.nombreusuario}}</td>
+          <td>{{c.codigoPago}}</td>
+          <td>{{c.total}}</td>
+          <td style="width: 150px">
+            <div class="d-flex justify-content-around">
+              <button class="btn btn-warning"><i class="fa-solid fa-pencil"></i></button>
+              <button *ngIf="c.id !== null" class="btn btn-danger" (click)="deleteVentas(c.id)"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+        <!-- } -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal -->
+  <app-modal-add-event [option]="typeData()" ></app-modal-add-event>
+</div>

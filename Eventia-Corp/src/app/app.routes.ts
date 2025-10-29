@@ -13,7 +13,7 @@ export const routes: Routes = [
     path: 'admin',
     loadComponent: () => import('./admin/pages/index-page/index-page'),
     children: [
-       {
+      {
         path: 'dashboard',
         loadComponent: () => import('./admin/pages/dashboard-page/dashboard-page'),
       },

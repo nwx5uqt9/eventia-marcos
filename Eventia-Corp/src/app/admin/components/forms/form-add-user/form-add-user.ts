@@ -1,20 +1,24 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RolUsuario } from 'src/app/rolUsuario';
 import { RolusuarioService } from 'src/app/shared/services/rolusuario.service';
 import { UsuarioService } from 'src/app/shared/services/usuario.service';
+import { EditDataService } from 'src/app/shared/services/edit-data.service';
 import { Usuario } from 'src/app/usuario';
 
 @Component({
   selector: 'app-form-add-user',
+  standalone: true,
   imports: [FormsModule, HttpClientModule, CommonModule],
   templateUrl: './form-add-user.html',
-  styleUrl: './form-add-user.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrl: './form-add-user.css'
 })
 export class FormAddUser implements OnInit {
+
+  isEditMode: boolean = false;
+  usuarioId: number | null = null;
 
   id: number | null = null;
   nombre: string = '';
@@ -35,11 +39,36 @@ export class FormAddUser implements OnInit {
 
   constructor(
     private usuarioService: UsuarioService,
-    private rolService: RolusuarioService
+    private rolService: RolusuarioService,
+    private editDataService: EditDataService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.cargarRoles();
+    this.checkEditMode();
+  }
+
+  checkEditMode(): void {
+    const editData = this.editDataService.getEditData();
+    if (editData && this.editDataService.isEditMode()) {
+      this.isEditMode = true;
+      this.usuarioId = editData.id;
+
+      this.nombre = editData.nombre || '';
+      this.apellidos = editData.apellidos || '';
+      this.nombreusuario = editData.nombreusuario || '';
+      this.password = editData.password || '';
+      this.dni = editData.dni || '';
+      this.edad = editData.edad || 0;
+      this.sexo = editData.sexo || '';
+      this.email = editData.email || '';
+      this.telefono = editData.telefono || '';
+      this.direccion = editData.direccion || '';
+      this.rolIdSeleccionado = editData.rolUsuario?.id || null;
+
+      this.cdr.markForCheck();
+    }
   }
 
   cargarRoles(): void {
@@ -59,14 +88,13 @@ export class FormAddUser implements OnInit {
   }
 
   agregarUsuario(): void {
-    // Validar que se haya seleccionado un rol
     if (!this.rolIdSeleccionado) {
       this.mensajeError = 'Por favor selecciona un rol';
       return;
     }
 
-    // Buscar el rol seleccionado
-    const rolSeleccionado = this.roles.find(r => r.id === this.rolIdSeleccionado);
+    const rolIdNumerico = Number(this.rolIdSeleccionado);
+    const rolSeleccionado = this.roles.find(r => r.id === rolIdNumerico);
 
     if (!rolSeleccionado) {
       this.mensajeError = 'Rol no válido';
@@ -74,48 +102,41 @@ export class FormAddUser implements OnInit {
     }
 
     const usuario = new Usuario(
-      null,
+      this.isEditMode ? this.usuarioId : null,
       this.nombre,
       this.apellidos,
       this.nombreusuario,
       this.password,
       this.dni,
       this.edad,
+      this.telefono,
       this.sexo,
       this.email,
-      this.telefono,
       this.direccion,
       rolSeleccionado
     );
 
-    console.log('Creando usuario:', usuario);
+    console.log(`${this.isEditMode ? 'Actualizando' : 'Creando'} usuario:`, usuario);
 
-    this.usuarioService.createUsuario(usuario).subscribe(
-      (res) => {
+    const operation = this.isEditMode
+      ? this.usuarioService.update(this.usuarioId!, usuario)
+      : this.usuarioService.createUsuario(usuario);
+
+    operation.subscribe({
+      next: (res) => {
         this.id = res.id;
-        this.mensaje = 'Usuario registrado correctamente ✅';
+        this.mensaje = `Usuario ${this.isEditMode ? 'actualizado' : 'registrado'} correctamente ✅`;
         this.mensajeError = '';
-
-        // Limpiar campos
         this.limpiarFormulario();
-
-        console.log('Usuario creado:', res);
+        this.editDataService.clearEditData();
+        setTimeout(() => window.location.reload(), 1500);
       },
-      (err) => {
-        console.error('Error al crear usuario:', err);
-
-        // Mensajes de error específicos
-        if (err.status === 500 && err.error?.message?.includes('foreign key constraint')) {
-          this.mensajeError = 'Error: El rol seleccionado no existe en la base de datos. Por favor, ejecuta el script insert_roles_basicos.sql';
-        } else if (err.status === 400) {
-          this.mensajeError = 'Error: Datos inválidos. Verifica que todos los campos estén correctos.';
-        } else {
-          this.mensajeError = 'Error al registrar usuario ❌. ' + (err.error?.message || 'Error desconocido');
-        }
-
+      error: (err) => {
+        console.error(`Error al ${this.isEditMode ? 'actualizar' : 'crear'} usuario:`, err);
+        this.mensajeError = `Error al ${this.isEditMode ? 'actualizar' : 'registrar'} usuario ❌`;
         this.mensaje = '';
       }
-    );
+    });
   }
 
   limpiarFormulario(): void {

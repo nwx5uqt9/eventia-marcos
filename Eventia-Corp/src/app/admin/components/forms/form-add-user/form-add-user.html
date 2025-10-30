@@ -76,7 +76,7 @@
   </div>
 
   <button type="button" class="btn btn-primary" (click)="agregarUsuario()" [disabled]="roles.length === 0">
-    Registrar Usuario
+    {{ isEditMode ? 'Actualizar Usuario' : 'Registrar Usuario' }}
   </button>
 
 </form>

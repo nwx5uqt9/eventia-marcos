@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ModalAddEvent } from 'src/app/shared/components/modal-add/modal-add';
 import { ModalStateService } from 'src/app/shared/services/modalState';
+import { EditDataService } from 'src/app/shared/services/edit-data.service';
 import { UsuarioService } from 'src/app/shared/services/usuario.service';
 import { Usuario } from 'src/app/usuario';
 
@@ -17,8 +18,14 @@ export default class ClientsPage implements OnInit {
   typeData = signal('client');
 
   usuario : Usuario [] = [];
+  codigo: string = '';
 
-  constructor(private modalState: ModalStateService, private usuarioService : UsuarioService ) {}
+  constructor(
+    private modalState: ModalStateService,
+    private usuarioService: UsuarioService,
+    private cdr: ChangeDetectorRef,
+    private editDataService: EditDataService
+  ) {}
 
   ngOnInit(): void {
     this.modalState;
@@ -26,6 +33,12 @@ export default class ClientsPage implements OnInit {
   }
 
   openModal() {
+    this.editDataService.clearEditData();
+    this.modalState.open(this.typeData());
+  }
+
+  editUsuario(usuario: Usuario) {
+    this.editDataService.setEditData(usuario);
     this.modalState.open(this.typeData());
   }
 
@@ -33,15 +46,20 @@ export default class ClientsPage implements OnInit {
     this.usuarioService.getUsuarioLista().subscribe(
       data => {
         this.usuario = data;
-      console.log(this.usuario);
-    }
-  );
+        console.log(this.usuario);
+        this.cdr.markForCheck();
+      }
+    );
   }
 
   deleteUsuario(id : number){
     this.usuarioService.deleteUsuarioById(id).subscribe(
-      () => this. listaUsuario()
+      () => this.listaUsuario()
     );
+  }
+
+  generarReportePdf(): void {
+    window.open('http://localhost:8082/usuarios/reporte/pdf', '_blank');
   }
 
 }

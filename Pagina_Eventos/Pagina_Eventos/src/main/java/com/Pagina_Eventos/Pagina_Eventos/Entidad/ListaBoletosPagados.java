@@ -1,79 +1,44 @@
 package com.Pagina_Eventos.Pagina_Eventos.Entidad;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "lista_boletos_pagados")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ListaBoletosPagados {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_boleta_venta", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private BoletaVenta boletaVenta;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_boleto", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Boleto boleto;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Usuario usuario;
 
     @Column(nullable = false)
-    private Integer cantidad = 1;
+    private Integer cantidad;
 
-    public ListaBoletosPagados() {
-    }
-
-    public ListaBoletosPagados(Integer id, BoletaVenta boletaVenta, Boleto boleto,
-                               Usuario usuario, Integer cantidad) {
-        this.id = id;
-        this.boletaVenta = boletaVenta;
-        this.boleto = boleto;
-        this.usuario = usuario;
-        this.cantidad = cantidad != null ? cantidad : 1;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public BoletaVenta getBoletaVenta() {
-        return boletaVenta;
-    }
-
-    public void setBoletaVenta(BoletaVenta boletaVenta) {
-        this.boletaVenta = boletaVenta;
-    }
-
-    public Boleto getBoleto() {
-        return boleto;
-    }
-
-    public void setBoleto(Boleto boleto) {
-        this.boleto = boleto;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
-
-    public Integer getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
+    @PrePersist
+    protected void onCreate() {
+        if (cantidad == null) {
+            cantidad = 1;
+        }
     }
 }
 

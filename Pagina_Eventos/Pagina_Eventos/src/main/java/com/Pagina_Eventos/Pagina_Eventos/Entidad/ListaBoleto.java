@@ -1,55 +1,31 @@
 package com.Pagina_Eventos.Pagina_Eventos.Entidad;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "lista_boleto", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"id_ubicacion", "id_boleto"})
 })
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ListaBoleto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_ubicacion", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Ubicacion ubicacion;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_boleto", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Boleto boleto;
-
-    public ListaBoleto() {
-    }
-
-    public ListaBoleto(Integer id, Ubicacion ubicacion, Boleto boleto) {
-        this.id = id;
-        this.ubicacion = ubicacion;
-        this.boleto = boleto;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Ubicacion getUbicacion() {
-        return ubicacion;
-    }
-
-    public void setUbicacion(Ubicacion ubicacion) {
-        this.ubicacion = ubicacion;
-    }
-
-    public Boleto getBoleto() {
-        return boleto;
-    }
-
-    public void setBoleto(Boleto boleto) {
-        this.boleto = boleto;
-    }
 }
 

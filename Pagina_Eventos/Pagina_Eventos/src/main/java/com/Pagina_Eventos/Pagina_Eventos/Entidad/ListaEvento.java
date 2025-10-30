@@ -1,54 +1,30 @@
 package com.Pagina_Eventos.Pagina_Eventos.Entidad;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "lista_evento", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"id_ubicacion", "id_evento"})
 })
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ListaEvento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_ubicacion", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Ubicacion ubicacion;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_evento", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Eventos evento;
-
-    public ListaEvento() {
-    }
-
-    public ListaEvento(Integer id, Ubicacion ubicacion, Eventos evento) {
-        this.id = id;
-        this.ubicacion = ubicacion;
-        this.evento = evento;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Ubicacion getUbicacion() {
-        return ubicacion;
-    }
-
-    public void setUbicacion(Ubicacion ubicacion) {
-        this.ubicacion = ubicacion;
-    }
-
-    public Eventos getEvento() {
-        return evento;
-    }
-
-    public void setEvento(Eventos evento) {
-        this.evento = evento;
-    }
 }

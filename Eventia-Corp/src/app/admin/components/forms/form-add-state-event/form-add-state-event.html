@@ -1,19 +1,26 @@
 <form>
-  <div class="mb-3">
-    <label for="id" class="form-label">ID:</label>
-    <input [(ngModel)]="id" name="id" type="number" class="form-control" id="id" placeholder="Ingresa el ID">
+  <div *ngIf="mensaje" class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ mensaje }}
+    <button type="button" class="btn-close" (click)="mensaje = ''"></button>
+  </div>
+
+  <div *ngIf="mensajeError" class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{ mensajeError }}
+    <button type="button" class="btn-close" (click)="mensajeError = ''"></button>
   </div>
 
   <div class="mb-3">
     <label for="nombre" class="form-label">Nombre:</label>
-    <input [(ngModel)]="nombre" name="nombre" type="text" class="form-control" id="nombre" placeholder="Ingresa el nombre del rol">
+    <input [(ngModel)]="nombre" name="nombre" type="text" class="form-control" id="nombre" placeholder="Ingresa el nombre del tipo" required>
   </div>
 
   <div class="mb-3">
     <label for="descripcion" class="form-label">Descripción:</label>
-    <input [(ngModel)]="descripcion" name="descripcion" type="text" class="form-control" id="descripcion" placeholder="Ingresa la descripción">
+    <input [(ngModel)]="descripcion" name="descripcion" type="text" class="form-control" id="descripcion" placeholder="Ingresa la descripción" required>
   </div>
 
-  <button type="button" class="btn btn-primary" (click)="agregarTipo()">Registrar Rol</button>
+  <button type="button" class="btn btn-primary" (click)="agregarTipo()">
+    {{ isEditMode ? 'Actualizar Tipo' : 'Registrar Tipo' }}
+  </button>
 
 </form>

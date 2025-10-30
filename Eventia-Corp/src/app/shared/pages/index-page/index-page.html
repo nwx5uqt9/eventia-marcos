@@ -15,11 +15,24 @@
         <div class="card-finanglobal">
           <h3 class="text-center mb-4">Ingresar al Sistema</h3>
 
+          <!-- Mensajes de estado -->
+          <div *ngIf="mensaje" class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ mensaje }}
+            <button type="button" class="btn-close" (click)="mensaje = ''"></button>
+          </div>
+
+          <div *ngIf="mensajeError" class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ mensajeError }}
+            <button type="button" class="btn-close" (click)="mensajeError = ''"></button>
+          </div>
+
           <!-- Formulario Iniciar Sesión -->
-          <form action="dashboard.html" method="post">
+          <form (ngSubmit)="login()">
             <div class="mb-3">
               <label class="form-label form-label-finanglobal">Correo Electrónico o Usuario</label>
               <input
+                [(ngModel)]="usuario"
+                name="usuario"
                 type="text"
                 class="form-control form-control-finanglobal"
                 placeholder="Ingresa tu Correo Electrónico o Usuario"
@@ -29,6 +42,8 @@
             <div class="mb-3">
               <label class="form-label form-label-finanglobal">Contraseña</label>
               <input
+                [(ngModel)]="password"
+                name="password"
                 type="password"
                 class="form-control form-control-finanglobal"
                 placeholder="Contraseña"
@@ -39,8 +54,10 @@
               <input type="checkbox" class="form-check-input" id="rememberMe" />
               <label class="form-check-label" for="rememberMe">Recordarme</label>
             </div>
-            <button type="submit" class="btn btn-eventia w-100 btn-lg">
-              <i class="fas fa-sign-in-alt me-2"></i>Ingresar
+            <button type="submit" class="btn btn-eventia w-100 btn-lg" [disabled]="cargando">
+              <i class="fas fa-sign-in-alt me-2"></i>
+              <span *ngIf="!cargando">Ingresar</span>
+              <span *ngIf="cargando">Ingresando...</span>
             </button>
           </form>
 

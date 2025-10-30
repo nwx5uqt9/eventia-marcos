@@ -44,8 +44,8 @@
     <label for="sexo" class="form-label">Sexo</label>
     <select [(ngModel)]="sexo" name="sexo" class="form-select" id="sexo">
       <option value="">Selecciona...</option>
-      <option value="Masculino">Masculino</option>
-      <option value="Femenino">Femenino</option>
+      <option value="M">Masculino</option>
+      <option value="F">Femenino</option>
     </select>
   </div>
 
@@ -65,18 +65,34 @@
   </div>
 
   <div class="mb-3">
-    <label for="rol" class="form-label">Rol <span class="text-danger">*</span></label>
+    <label for="rol" class="form-label">
+      Rol <span class="text-danger">*</span>
+    </label>
+
     <select [(ngModel)]="rolIdSeleccionado" name="rol" class="form-select" id="rol" required>
-      <option [value]="null">Selecciona un rol...</option>
-      <option *ngFor="let rol of roles" [value]="rol.id">{{ rol.rol }} - {{ rol.descripcion }}</option>
+      <option [ngValue]="null">Selecciona un rol...</option>
+
+      @for (rol of roles; track rol.id) {
+        <option [ngValue]="rol.id">{{ rol.rol }} - {{ rol.descripcion }}</option>
+      }
     </select>
-    <small class="form-text text-muted" *ngIf="roles.length === 0">
-      ⚠️ No hay roles disponibles. Ejecuta el script: insert_roles_basicos.sql
-    </small>
+
+    @if (roles.length === 0) {
+      <small class="form-text text-muted">
+        No hay roles disponibles. Verifica que el backend esté corriendo y los roles estén en la BD.
+      </small>
+    }
+
+    @if (rolIdSeleccionado) {
+      <small class="form-text text-success">
+        Rol seleccionado ID: {{ rolIdSeleccionado }}
+      </small>
+    }
   </div>
 
+
   <button type="button" class="btn btn-primary" (click)="agregarUsuario()" [disabled]="roles.length === 0">
-    Registrar Cliente
+    {{ isEditMode ? 'Actualizar Cliente' : 'Registrar Cliente' }}
   </button>
 
 </form>

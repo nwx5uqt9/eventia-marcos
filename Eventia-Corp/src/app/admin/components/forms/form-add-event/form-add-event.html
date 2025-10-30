@@ -1,43 +1,79 @@
-<form  (ngSubmit)="guardar()"><!-- declarar  [formGroup]="usuarioForm" -->
-  <div class="mb-3">
-    <label>ID:</label>
-    <input class="form-control" formControlName="id" type="number" />
+<form [formGroup]="eventoForm" (ngSubmit)="guardar()">
+  @if (error()) {
+  <div class="alert alert-danger" role="alert">
+    {{ error() }}
   </div>
+  }
+
   <div class="mb-3">
-    <label>Nombre</label>
-    <input class="form-control" formControlName="name" />
+    <label class="form-label">Nombre *</label>
+    <input class="form-control" formControlName="nombre" type="text" placeholder="Nombre del evento" />
+    @if (eventoForm.get('nombre')?.invalid && eventoForm.get('nombre')?.touched) {
+    <small class="text-danger">El nombre es requerido</small>
+    }
   </div>
+
   <div class="mb-3">
-    <label>Descripción</label>
-    <textarea class="form-control" formControlName="description" ></textarea>
+    <label class="form-label">Descripción</label>
+    <textarea class="form-control" formControlName="descripcion" rows="3" placeholder="Descripción del evento"></textarea>
   </div>
+
   <div class="mb-3">
-    <label>Fecha:</label>
-    <input class="form-control" formControlName="date" type="date" />
+    <label class="form-label">Fecha y Hora *</label>
+    <input class="form-control" formControlName="fechaHora" type="datetime-local" />
+    @if (eventoForm.get('fechaHora')?.invalid && eventoForm.get('fechaHora')?.touched) {
+    <small class="text-danger">La fecha y hora son requeridas</small>
+    }
   </div>
+
   <div class="mb-3">
-    <label>Tipo</label>
-    <select class="form-select" formControlName="type">
-      <option selected>Seleccione...</option>
-      <option value="admin">Show</option>
-      <option value="cliente">Cumpleaños</option>
+    <label class="form-label">Tipo de Evento *</label>
+    <select class="form-select" formControlName="tipoEvento">
+      <option value="">Seleccione un tipo...</option>
+      @for (tipo of tiposEvento(); track tipo.id) {
+      <option [value]="tipo.id">{{ tipo.nombre }}</option>
+      }
     </select>
+    @if (eventoForm.get('tipoEvento')?.invalid && eventoForm.get('tipoEvento')?.touched) {
+    <small class="text-danger">El tipo de evento es requerido</small>
+    }
   </div>
+
   <div class="mb-3">
-    <label>Organizador:</label>
-    <select class="form-select" formControlName="organization">
-      <option selected>Seleccione...</option>
-      <option value="admin">Idk</option>
-      <option value="cliente">Master & Media</option>
+    <label class="form-label">Organizador *</label>
+    <select class="form-select" formControlName="organizador">
+      <option value="">Seleccione un organizador...</option>
+      @for (org of organizadores(); track org.id) {
+      <option [value]="org.id">{{ org.nombreEmpresa }}</option>
+      }
     </select>
+    @if (eventoForm.get('organizador')?.invalid && eventoForm.get('organizador')?.touched) {
+    <small class="text-danger">El organizador es requerido</small>
+    }
   </div>
+
   <div class="mb-3">
-    <label>Estado</label>
-    <select class="form-select" formControlName="state">
-      <option selected>Seleccione...</option>
-      <option value="admin">Vacantes</option>
-      <option value="cliente">Lleno</option>
-      <option value="cliente">Finalizado</option>
+    <label class="form-label">Estado *</label>
+    <select class="form-select" formControlName="estadoEvento">
+      <option value="">Seleccione un estado...</option>
+      @for (estado of estadosEvento(); track estado.id) {
+      <option [value]="estado.id">{{ estado.nombre }}</option>
+      }
     </select>
+    @if (eventoForm.get('estadoEvento')?.invalid && eventoForm.get('estadoEvento')?.touched) {
+    <small class="text-danger">El estado del evento es requerido</small>
+    }
+  </div>
+
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <button type="button" class="btn btn-outline-secondary" (click)="closeModal()">Cerrar</button>
+    <button type="submit" class="btn btn-success" [disabled]="loading()">
+      @if (loading()) {
+      <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+      Guardando...
+      } @else {
+      Guardar Evento
+      }
+    </button>
   </div>
 </form>

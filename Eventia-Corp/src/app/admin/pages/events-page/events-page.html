@@ -43,12 +43,11 @@
   <!-- Section Content -->
   <div class="container">
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
-      @for (item of dataCard; track item.id) {
+      @for (item of eventos(); track item.id) {
       <div class="col">
         <app-card
-          [title]="item.title"
-          [description]="item.description"
-          [imageUrl]="item.imageUrl"
+          [title]="item.nombre"
+          [description]="item.descripcion"
           class="cards h-100"
         >
         </app-card>

@@ -19,7 +19,7 @@ export class EventoService {
     return this.http.get<Evento>(`${this.api}/${id}`);
   }
 
-  create(evento: Evento): Observable<Evento> {
+  create(evento: any): Observable<Evento> {
     return this.http.post<Evento>(this.api, evento);
   }
 

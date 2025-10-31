@@ -3,13 +3,31 @@ import { Ubicacion } from "./ubicacion";
 import { Usuario } from "./usuario";
 
 export class Bventas {
+  id?: number | null;
+  usuario?: Usuario;
+  evento?: Evento;
+  ubicacion?: Ubicacion;
+  codigoPago?: string;
+  fechaVenta?: string;
+  total?: number;
+
   constructor(
-    public id: number | null,
-    public usuario: Usuario | null,
-    public evento: Evento | null,
-    public ubicacion: Ubicacion | null,
-    public codigoPago: string,
-    public fechaVenta: string,
-    public total: number
-  ) {}
+    id: number | null,
+    usuario: Usuario | { id: number } | null,
+    evento: Evento | { id: number } | null,
+    ubicacion: Ubicacion | { id: number } | null,
+    codigoPago: string,
+    fechaVenta: string,
+    total: number
+  ) {
+    this.id = id;
+    // Convertir { id: number } a objeto parcial si es necesario
+    this.usuario = usuario as Usuario || undefined;
+    this.evento = evento as Evento || undefined;
+    this.ubicacion = ubicacion as Ubicacion || undefined;
+    this.codigoPago = codigoPago;
+    this.fechaVenta = fechaVenta;
+    this.total = total;
+  }
 }
+

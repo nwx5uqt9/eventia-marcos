@@ -36,7 +36,7 @@
           <td>{{c.descripcion}}</td>
           <td style="width: 150px">
             <div class="d-flex justify-content-around">
-              <button class="btn btn-warning"><i class="fa-solid fa-pencil"></i></button>
+              <button class="btn btn-warning" (click)="editRol(c)"><i class="fa-solid fa-pencil"></i></button>
               <button *ngIf="c.id !== null" class="btn btn-danger" (click)="deleteRol(c.id)"><i class="fa-solid fa-trash"></i></button>
             </div>
           </td>
@@ -83,7 +83,7 @@
           <td>{{d.descripcion}}</td>
           <td style="width: 150px">
             <div class="d-flex justify-content-around">
-              <button class="btn btn-warning"><i class="fa-solid fa-pencil"></i></button>
+              <button class="btn btn-warning" (click)="editTipo(d)"><i class="fa-solid fa-pencil"></i></button>
               <button *ngIf="d.id !== null" class="btn btn-danger" (click)="deleteTipo(d.id)"><i class="fa-solid fa-trash"></i></button>
             </div>
           </td>
@@ -130,7 +130,7 @@
           <td>{{f.descripcion}}</td>
           <td style="width: 150px">
             <div class="d-flex justify-content-around">
-              <button class="btn btn-warning"><i class="fa-solid fa-pencil"></i></button>
+              <button class="btn btn-warning" (click)="editEstado(f)"><i class="fa-solid fa-pencil"></i></button>
               <button *ngIf="f.id !== null" class="btn btn-danger" (click)="deleteEstado(f.id)" ><i class="fa-solid fa-trash"></i></button>
             </div>
           </td>

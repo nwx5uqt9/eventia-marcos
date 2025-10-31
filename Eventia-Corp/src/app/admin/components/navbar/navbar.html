@@ -4,7 +4,6 @@
     <div class="row align-items-center">
       <div class="col align-items-center">
         <button class="btn btn-toggle-sidebar btn-outline-dark" (click)="onToggleClick()">
-          <!-- Boton de Sidebar -->
           <i class="fa-solid fa-bars"></i>
         </button>
         {{ location }}
@@ -12,7 +11,6 @@
 
       <div class="col-auto">
         <div class="d-flex align-items-center">
-          <!-- Menu -->
           <div class="user-avatar-eventia me-2">NC</div>
           <div class="dropdown">
             <button
@@ -25,7 +23,7 @@
             </button>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="">Perfil</a></li>
-              <li><a class="dropdown-item" [routerLink]="'/index'">Cerrar Sesión</a></li>
+              <li><a class="dropdown-item" (click)="logout()">Cerrar Sesión</a></li>
             </ul>
           </div>
         </div>

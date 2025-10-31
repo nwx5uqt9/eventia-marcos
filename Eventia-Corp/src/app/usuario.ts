@@ -9,9 +9,9 @@ export class Usuario {
     public password: string,
     public dni: string,
     public edad: number,
+    public telefono: string,
     public sexo: string,
     public email: string,
-    public telefono: string,
     public direccion: string,
     public rolUsuario: RolUsuario | null
   ) {}

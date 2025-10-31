@@ -2,7 +2,10 @@ package com.Pagina_Eventos.Pagina_Eventos.Controlador;
 
 import com.Pagina_Eventos.Pagina_Eventos.Entidad.BoletaVenta;
 import com.Pagina_Eventos.Pagina_Eventos.servicio.BoletaVentaServicio;
+import com.Pagina_Eventos.Pagina_Eventos.servicio.VentasPdfService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,9 +17,11 @@ import java.util.List;
 public class BoletaVentaControlador {
 
     private final BoletaVentaServicio boletaVentaServicio;
+    private final VentasPdfService ventasPdfService;
 
-    public BoletaVentaControlador(BoletaVentaServicio boletaVentaServicio) {
+    public BoletaVentaControlador(BoletaVentaServicio boletaVentaServicio, VentasPdfService ventasPdfService) {
         this.boletaVentaServicio = boletaVentaServicio;
+        this.ventasPdfService = ventasPdfService;
     }
 
     @GetMapping
@@ -59,6 +64,23 @@ public class BoletaVentaControlador {
         }
         boletaVentaServicio.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/reporte/pdf")
+    public ResponseEntity<byte[]> generarReportePdf() {
+        try {
+            byte[] pdfBytes = ventasPdfService.generarReporteVentas();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("attachment", "reporte_ventas.pdf");
+            headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+
+            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }
 

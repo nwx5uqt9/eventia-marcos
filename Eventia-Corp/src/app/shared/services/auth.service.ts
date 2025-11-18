@@ -1,16 +1,38 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, BehaviorSubject, throwError } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { Usuario } from 'src/app/usuario';
+
+// Interface para la respuesta del login
+interface LoginResponse {
+  success: boolean;
+  message: string;
+  usuario?: {
+    id: number;
+    nombre: string;
+    apellidos: string;
+    nombreusuario: string;
+    email: string;
+    dni: string;
+    edad: number;
+    telefono: string;
+    sexo: string;
+    direccion: string;
+    rolUsuario: {
+      id: number;
+      rol: string;
+      descripcion: string;
+    };
+  };
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl = 'http://localhost:8082/usuarios';
-  private currentUserSubject = new BehaviorSubject<Usuario | null>(null);
+  private baseUrl = 'http://localhost:8082';
+  private currentUserSubject = new BehaviorSubject<any | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(
@@ -24,74 +46,80 @@ export class AuthService {
     }
   }
 
-  login(usuario: string, password: string): Observable<any> {
-    // Buscar usuario por nombreusuario o email
-    return this.http.get<Usuario[]>(`${this.baseUrl}`).pipe(
-      tap((usuarios: Usuario[]) => {
-        const user = usuarios.find(u =>
-          (u.nombreusuario === usuario || u.email === usuario) &&
-          u.password === password
-        );
+  /**
+   * Login usando el endpoint correcto con BCrypt
+   * @param usuario - Nombre de usuario o email
+   * @param password - Contraseña sin encriptar
+   */
+  login(usuario: string, password: string): Observable<LoginResponse> {
+    const loginData = {
+      username: usuario,
+      password: password
+    };
 
-        if (user) {
+    return this.http.post<LoginResponse>(`${this.baseUrl}/auth/login`, loginData).pipe(
+      tap((response: LoginResponse) => {
+        if (response.success && response.usuario) {
           // Guardar usuario en localStorage
-          localStorage.setItem('currentUser', JSON.stringify(user));
-          this.currentUserSubject.next(user);
+          localStorage.setItem('currentUser', JSON.stringify(response.usuario));
+          localStorage.setItem('isLoggedIn', 'true');
+          this.currentUserSubject.next(response.usuario);
 
           // Redirigir según el rol
-          this.redirectByRole(user);
-        } else {
-          throw new Error('Credenciales inválidas');
+          this.redirectByRole(response.usuario);
         }
+      }),
+      catchError(error => {
+        console.error('Error en login:', error);
+        return throwError(() => new Error(error.error?.message || 'Error al iniciar sesión'));
       })
     );
   }
 
-  private redirectByRole(user: Usuario): void {
+  private redirectByRole(user: any): void {
     const rolId = user.rolUsuario?.id;
+    const rolNombre = user.rolUsuario?.rol?.toLowerCase();
 
-    switch(rolId) {
-      case 1: // Administrador
-        this.router.navigate(['/admin']);
-        break;
-      case 2: // Organizador
-        this.router.navigate(['/control']);
-        break;
-      case 3: // Cliente
-        this.router.navigate(['/client']);
-        break;
-      default:
-        this.router.navigate(['/index']);
+    // Redirigir según el rol
+    if (rolId === 1 || rolNombre === 'administrador') {
+      this.router.navigate(['/admin']);
+    } else if (rolId === 2 || rolNombre === 'organizador') {
+      this.router.navigate(['/control']);
+    } else if (rolId === 3 || rolNombre === 'cliente') {
+      this.router.navigate(['/client']);
+    } else {
+      this.router.navigate(['/index']);
     }
   }
 
   logout(): void {
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('isLoggedIn');
     this.currentUserSubject.next(null);
     this.router.navigate(['/index']);
   }
 
-  getCurrentUser(): Usuario | null {
+  getCurrentUser(): any {
     return this.currentUserSubject.value;
   }
 
   isLoggedIn(): boolean {
-    return this.currentUserSubject.value !== null;
+    return this.currentUserSubject.value !== null && localStorage.getItem('isLoggedIn') === 'true';
   }
 
   isAdmin(): boolean {
     const user = this.currentUserSubject.value;
-    return user?.rolUsuario?.id === 1;
+    return user?.rolUsuario?.id === 1 || user?.rolUsuario?.rol?.toLowerCase() === 'administrador';
   }
 
   isOrganizador(): boolean {
     const user = this.currentUserSubject.value;
-    return user?.rolUsuario?.id === 2;
+    return user?.rolUsuario?.id === 2 || user?.rolUsuario?.rol?.toLowerCase() === 'organizador';
   }
 
   isCliente(): boolean {
     const user = this.currentUserSubject.value;
-    return user?.rolUsuario?.id === 3;
+    return user?.rolUsuario?.id === 3 || user?.rolUsuario?.rol?.toLowerCase() === 'cliente';
   }
 }
 

@@ -16,7 +16,7 @@ import { NgIf } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class RegisterPage implements OnInit {
-  
+
 
   id: number | null = null;
   nombre: string = '';
@@ -31,14 +31,14 @@ export default class RegisterPage implements OnInit {
   direccion: string = '';
 rolUsuario: RolUsuario = new RolUsuario(2, 'Rol por defecto', 'usuario');
 
-  mensaje: string = ''; 
+  mensaje: string = '';
 
 
   constructor(private usuarioService : UsuarioService ) {}
 
   ngOnInit(): void {
 
-  } 
+  }
 
   agregarUsuario(){
 const usuario = new Usuario(
@@ -49,19 +49,21 @@ const usuario = new Usuario(
   this.contrasena,
   this.dni,
   this.edad,
-  this.sexo,
-  this.correo,
-  this.telefono,
+  this.telefono,      // Telefono va antes que sexo
+  this.sexo,          // Sexo va después de telefono
+  this.correo,        // Email
   this.direccion,
-  this.rolUsuario 
+  this.rolUsuario
 );
 
-console.log(usuario);
+console.log('Usuario a registrar:', usuario);
 
 this.usuarioService.createUsuario(usuario).subscribe(
   res => {
         this.id = res.id;
         this.mensaje = 'Usuario registrado correctamente ✅';
+        console.log('Usuario registrado:', res);
+
         // Opcional: limpiar campos
         this.nombre = '';
         this.apellidos = '';
@@ -73,17 +75,16 @@ this.usuarioService.createUsuario(usuario).subscribe(
         this.correo = '';
         this.telefono = '';
         this.direccion = '';
-
-    console.log(res);  
-    this.id = res.id; 
   },
-
-  
-  err => {console.error(err);
-          this.mensaje = 'Error al registrar usuario ❌';
-}
-          
-
+  err => {
+    console.error('Error al registrar:', err);
+    if (err.status === 409) {
+      // Error de duplicados
+      this.mensaje = err.error.message || 'Ya existe un usuario con esos datos ❌';
+    } else {
+      this.mensaje = 'Error al registrar usuario ❌';
+    }
+  }
 );
   }
 

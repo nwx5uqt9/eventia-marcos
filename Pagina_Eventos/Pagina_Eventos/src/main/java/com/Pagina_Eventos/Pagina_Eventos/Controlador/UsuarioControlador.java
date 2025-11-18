@@ -3,6 +3,8 @@ package com.Pagina_Eventos.Pagina_Eventos.Controlador;
 import com.Pagina_Eventos.Pagina_Eventos.Entidad.Usuario;
 import com.Pagina_Eventos.Pagina_Eventos.servicio.UsuarioServicio;
 import com.Pagina_Eventos.Pagina_Eventos.servicio.ClientesPdfService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,6 +17,8 @@ import java.util.List;
 @RequestMapping("/usuarios")
 @CrossOrigin(origins = "http://localhost:4200")
 public class UsuarioControlador {
+
+    private static final Logger logger = LoggerFactory.getLogger(UsuarioControlador.class);
 
     private final UsuarioServicio usuarioServicio;
     private final ClientesPdfService clientesPdfService;
@@ -50,7 +54,12 @@ public class UsuarioControlador {
                     existing.setApellidos(usuario.getApellidos());
                     existing.setNombreusuario(usuario.getNombreusuario());
                     existing.setEmail(usuario.getEmail());
-                    existing.setPassword(usuario.getPassword());
+
+                    // Solo actualizar la contraseña si se proporciona una nueva (no vacía)
+                    if (usuario.getPassword() != null && !usuario.getPassword().isEmpty()) {
+                        existing.setPassword(usuario.getPassword());
+                    }
+
                     existing.setDni(usuario.getDni());
                     existing.setEdad(usuario.getEdad());
                     existing.setTelefono(usuario.getTelefono());
@@ -83,7 +92,7 @@ public class UsuarioControlador {
 
             return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error al generar reporte PDF de clientes", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

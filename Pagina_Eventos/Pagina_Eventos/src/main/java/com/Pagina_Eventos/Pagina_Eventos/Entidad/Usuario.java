@@ -40,7 +40,7 @@ public class Usuario {
     @Column(length = 20)
     private String telefono;
 
-    @Column(length = 10)
+    @Column(length = 20)
     private String sexo;
 
     @Column(length = 255)

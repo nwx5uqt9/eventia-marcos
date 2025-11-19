@@ -1,0 +1,104 @@
+@if (evento) {
+  <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <!-- Header -->
+        <div class="modal-header bg-dark text-white border-0">
+          <h5 class="modal-title fw-bold">Comprar Boletos</h5>
+          <button type="button" class="btn-close btn-close-white" (click)="cerrar()"></button>
+        </div>
+
+        <!-- Body -->
+        <div class="modal-body p-4">
+          <!-- Información del Evento -->
+          <div class="mb-4 p-3 bg-light rounded-3">
+            <h6 class="fw-bold text-dark mb-2">{{ evento.nombre }}</h6>
+            <p class="text-muted mb-2 small">
+              {{ evento.fechaHora | date:'dd/MM/yyyy HH:mm' }}
+            </p>
+            <p class="text-muted mb-0 small">{{ evento.descripcion }}</p>
+          </div>
+
+          <!-- Cantidad -->
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Cantidad de boletos</label>
+            <div class="input-group input-group-lg">
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                (click)="decrementar()"
+                [disabled]="cantidad <= 1">
+                -
+              </button>
+              <input
+                type="number"
+                class="form-control text-center fw-bold"
+                [(ngModel)]="cantidad"
+                min="1"
+                max="10"
+                readonly>
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                (click)="incrementar()"
+                [disabled]="cantidad >= 10">
+                +
+              </button>
+            </div>
+            <small class="text-muted">Máximo 10 boletos por compra</small>
+          </div>
+
+          <!-- Método de Pago -->
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Método de Pago</label>
+            <select
+              class="form-select form-select-lg"
+              [(ngModel)]="metodoPago"
+              required>
+              <option value="" disabled selected>Seleccione un método de pago</option>
+              @for (metodo of metodosPago; track metodo.valor) {
+                <option [value]="metodo.valor">{{ metodo.nombre }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Resumen -->
+          <div class="card bg-warning bg-opacity-10 border-warning">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-dark">Precio por boleto:</span>
+                <span class="fw-bold">S/ {{ precioUnitario.toFixed(2) }}</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-dark">Cantidad:</span>
+                <span class="fw-bold">{{ cantidad }}</span>
+              </div>
+              <hr>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="fs-5 fw-bold text-dark">Total:</span>
+                <span class="fs-4 fw-bold text-success">S/ {{ total.toFixed(2) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="modal-footer border-0 bg-light">
+          <button type="button" class="btn btn-secondary" (click)="cerrar()">
+            Cancelar
+          </button>
+          <button
+            type="button"
+            class="btn btn-warning text-dark fw-bold"
+            (click)="confirmarCompra()"
+            [disabled]="!metodoPago">
+            Confirmar Compra
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+
+

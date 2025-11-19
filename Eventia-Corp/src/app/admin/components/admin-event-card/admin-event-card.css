@@ -1,0 +1,80 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15) !important;
+}
+
+.card-img-top {
+  border-radius: 0;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  color: #1c1c1e;
+}
+
+.card-text {
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.btn-group button {
+  transition: all 0.3s ease;
+}
+
+.btn-group button:hover {
+  transform: scale(1.02);
+}
+
+.btn-warning:hover {
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+}
+
+.btn-danger:hover {
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+}
+
+
+@Component({
+  selector: 'app-admin-event-card',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './admin-event-card.html',
+  styleUrl: './admin-event-card.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class AdminEventCard {
+  @Input() title: string = 'Título del Evento';
+  @Input() description: string = 'Descripción del evento';
+  @Input() imageUrl: string = 'img/micro-eventos.png';
+  @Input() eventoId: number | null = null;
+
+  @Output() onEdit = new EventEmitter<number>();
+  @Output() onDelete = new EventEmitter<number>();
+
+  editarEvento(): void {
+    if (this.eventoId) {
+      this.onEdit.emit(this.eventoId);
+    }
+  }
+
+  eliminarEvento(): void {
+    if (this.eventoId) {
+      this.onDelete.emit(this.eventoId);
+    }
+  }
+}
+

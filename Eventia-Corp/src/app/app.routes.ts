@@ -50,6 +50,20 @@ export const routes: Routes = [
   {
     path: 'client',
     loadComponent: () => import('./client/pages/index-page/index-page'),
+    children: [
+      {
+        path: 'events',
+        loadComponent: () => import('./client/pages/events-page/events-page'),
+      },
+      {
+        path: 'tickets',
+        loadComponent: () => import('./client/pages/tickets-page/tickets-page'),
+      },
+      {
+        path: '**',
+        redirectTo: 'events',
+      },
+    ],
   },
   {
     path: '**',

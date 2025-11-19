@@ -42,6 +42,12 @@ public class BoletaVenta {
     @Column(precision = 10, scale = 2)
     private BigDecimal total;
 
+    @Column(name = "cantidad", nullable = false)
+    private Integer cantidad;
+
+    @Column(name = "metodo_pago", length = 50)
+    private String metodoPago;
+
     @PrePersist
     protected void onCreate() {
         if (fechaVenta == null) {

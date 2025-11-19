@@ -1,27 +1,46 @@
-.custom-card-width-250 {
-    width: 250px;
-    transition: transform 0.2s, box-shadow 0.2s;
+/* Card mejorada con Bootstrap */
+:host {
+  display: block;
+  height: 100%;
 }
 
-.custom-hover-lift:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35) !important;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-.custom-img-height {
-    height: 150px;
-    object-fit: cover;
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15) !important;
 }
 
-.custom-description {
-    white-space: pre-line;
-    font-size: 0.95em;
+.card-img-top {
+  border-radius: 0;
 }
 
-.custom-btn-full {
-    display: block;
-    width: calc(100% - 30px);
-    margin: 0px 15px 15px 15px;
-    padding: 8px 0;
+.card-title {
+  font-size: 1.1rem;
+  color: #1c1c1e;
 }
+
+.card-text {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-footer button {
+  transition: all 0.3s ease;
+}
+
+.card-footer button:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+}
+
+

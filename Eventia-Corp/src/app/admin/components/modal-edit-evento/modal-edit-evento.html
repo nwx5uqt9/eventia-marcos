@@ -1,0 +1,112 @@
+@if (eventoEditado) {
+  <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 shadow-lg">
+        <!-- Header -->
+        <div class="modal-header bg-warning text-dark border-0">
+          <h5 class="modal-title fw-bold">Editar Evento</h5>
+          <button type="button" class="btn-close" (click)="cerrar()"></button>
+        </div>
+
+        <!-- Body -->
+        <div class="modal-body p-4">
+          <form>
+            <!-- Nombre del Evento -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Nombre del Evento</label>
+              <input
+                type="text"
+                class="form-control form-control-lg"
+                [(ngModel)]="eventoEditado.nombre"
+                name="nombre"
+                required>
+            </div>
+
+            <!-- Descripción -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Descripción</label>
+              <textarea
+                class="form-control"
+                rows="3"
+                [(ngModel)]="eventoEditado.descripcion"
+                name="descripcion"
+                required></textarea>
+            </div>
+
+            <!-- Fecha y Hora -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Fecha y Hora</label>
+              <input
+                type="datetime-local"
+                class="form-control"
+                [(ngModel)]="eventoEditado.fechaHora"
+                name="fechaHora"
+                required>
+            </div>
+
+            <div class="row">
+              <!-- Tipo de Evento -->
+              <div class="col-md-4 mb-3">
+                <label class="form-label fw-semibold">Tipo de Evento</label>
+                <select
+                  class="form-select"
+                  [(ngModel)]="eventoEditado.tipoEvento"
+                  name="tipoEvento"
+                  required>
+                  <option [ngValue]="null" disabled>Seleccione...</option>
+                  @for (tipo of tiposEvento; track tipo.id) {
+                    <option [ngValue]="tipo">{{ tipo.nombre }}</option>
+                  }
+                </select>
+              </div>
+
+              <!-- Estado -->
+              <div class="col-md-4 mb-3">
+                <label class="form-label fw-semibold">Estado</label>
+                <select
+                  class="form-select"
+                  [(ngModel)]="eventoEditado.estadoEvento"
+                  name="estadoEvento"
+                  required>
+                  <option [ngValue]="null" disabled>Seleccione...</option>
+                  @for (estado of estadosEvento; track estado.id) {
+                    <option [ngValue]="estado">{{ estado.nombre }}</option>
+                  }
+                </select>
+              </div>
+
+              <!-- Organizador -->
+              <div class="col-md-4 mb-3">
+                <label class="form-label fw-semibold">Organizador</label>
+                <select
+                  class="form-select"
+                  [(ngModel)]="eventoEditado.organizador"
+                  name="organizador"
+                  required>
+                  <option [ngValue]="null" disabled>Seleccione...</option>
+                  @for (org of organizadores; track org.id) {
+                    <option [ngValue]="org">{{ org.nombreEmpresa }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Footer -->
+        <div class="modal-footer border-0 bg-light">
+          <button type="button" class="btn btn-secondary" (click)="cerrar()">
+            Cancelar
+          </button>
+          <button
+            type="button"
+            class="btn btn-warning text-dark fw-bold"
+            (click)="guardar()">
+            Guardar Cambios
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+

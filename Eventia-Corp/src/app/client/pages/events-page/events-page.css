@@ -1,0 +1,18 @@
+/* Estilos mínimos - Bootstrap hace el resto */
+:host {
+  display: block;
+}
+
+/* Mejorar la visualización de las cards */
+app-card {
+  display: block;
+  height: 100%;
+}
+
+/* Animación hover para las cards */
+app-card:hover {
+  transform: translateY(-5px);
+  transition: transform 0.3s ease;
+}
+
+

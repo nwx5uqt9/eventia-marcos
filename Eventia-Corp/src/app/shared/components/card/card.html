@@ -1,10 +1,17 @@
-<div class="card shadow-sm custom-card-width-250 custom-hover-lift ">
-    <img [src]="['img/micro-eventos.png']" [alt]="title" class="card-img-top custom-img-height ">
+<div class="card shadow-sm h-100">
+    <img [src]="imageUrl || 'img/micro-eventos.png'" [alt]="title" class="card-img-top" style="height: 200px; object-fit: cover;">
 
-    <div class="card-body ">
-        <h5 class="card-title text-truncate">{{ title }}</h5>
-        <p class="card-text text-muted custom-description">{{ description }}</p>
+    <div class="card-body d-flex flex-column">
+        <h5 class="card-title text-truncate mb-2">{{ title }}</h5>
+        <p class="card-text text-muted flex-grow-1" style="font-size: 0.9rem;">{{ description }}</p>
     </div>
 
-    <a href="#" class="btn btn-primary custom-btn-full">Más información</a>
+    <div class="card-footer bg-transparent border-0 p-3">
+        <button
+            (click)="handleClick($event)"
+            class="btn w-100"
+            [ngClass]="buttonClass">
+            {{ buttonText }}
+        </button>
+    </div>
 </div>

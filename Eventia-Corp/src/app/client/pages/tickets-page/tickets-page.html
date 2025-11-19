@@ -1,0 +1,91 @@
+<div class="container-fluid p-4">
+  <!-- Header Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h2 class="text-dark fw-bold mb-2">
+        <i class="bi bi-ticket-perforated me-2 text-warning"></i>
+        Mis Boletos
+      </h2>
+      <p class="text-muted fs-6">Administra tus boletos comprados</p>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="row">
+    <div class="col-12">
+      @if (boletos().length > 0) {
+        <!-- Lista de boletos -->
+        <div class="row g-4">
+          @for (boleto of boletos(); track boleto.id) {
+            <div class="col-12 col-md-6 col-lg-4">
+              <div class="card h-100 shadow-sm border-0">
+                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                  <h5 class="mb-0 text-truncate">{{ boleto.eventoNombre }}</h5>
+                  <span class="badge" [ngClass]="getEstadoBadgeClass(boleto.estado)">
+                    {{ getEstadoTexto(boleto.estado) }}
+                  </span>
+                </div>
+                <div class="card-body">
+                  <div class="mb-3">
+                    <p class="mb-1">
+                      <i class="bi bi-calendar3 me-2 text-primary"></i>
+                      <strong>Fecha:</strong> {{ boleto.fecha }}
+                    </p>
+                    <p class="mb-1">
+                      <i class="bi bi-clock me-2 text-primary"></i>
+                      <strong>Hora:</strong> {{ boleto.hora }}
+                    </p>
+                    <p class="mb-1">
+                      <i class="bi bi-geo-alt me-2 text-primary"></i>
+                      <strong>Ubicación:</strong> {{ boleto.ubicacion }}
+                    </p>
+                    <p class="mb-1">
+                      <i class="bi bi-people me-2 text-primary"></i>
+                      <strong>Cantidad:</strong> {{ boleto.cantidad }}
+                      {{ boleto.cantidad === 1 ? 'boleto' : 'boletos' }}
+                    </p>
+                    <p class="mb-1">
+                      <i class="bi bi-credit-card me-2 text-primary"></i>
+                      <strong>Método de Pago:</strong> {{ boleto.metodoPago }}
+                    </p>
+                    <p class="mb-1">
+                      <i class="bi bi-tag me-2 text-primary"></i>
+                      <strong>Código:</strong>
+                      <code class="ms-1">{{ boleto.codigo }}</code>
+                    </p>
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="text-success mb-0">S/ {{ boleto.precio.toFixed(2) }}</h4>
+                  </div>
+                </div>
+                <div class="card-footer bg-light border-0">
+                  <div class="btn-group w-100" role="group">
+                    <button type="button" class="btn btn-outline-primary" (click)="verDetalle(boleto)">
+                      <i class="bi bi-eye me-1"></i>Detalles
+                    </button>
+                    <button type="button" class="btn btn-outline-success" (click)="descargarBoleto(boleto)">
+                      <i class="bi bi-download me-1"></i>Descargar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <!-- Estado vacío -->
+        <div class="text-center py-5">
+          <div class="bg-light rounded-3 p-5 shadow-sm">
+            <i class="bi bi-ticket-detailed fs-1 text-warning d-block mb-3"></i>
+            <h4 class="fw-bold mb-3">No tienes boletos</h4>
+            <p class="text-muted mb-4">Aún no has comprado ningún boleto. Explora nuestros eventos disponibles.</p>
+            <a routerLink="/client/events" class="btn btn-warning btn-lg text-dark fw-semibold">
+              <i class="bi bi-search me-2"></i>Explorar Eventos
+            </a>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+

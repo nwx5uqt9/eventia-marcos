@@ -36,6 +36,12 @@ public class BoletaVentaControlador {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/usuario/{idUsuario}")
+    public ResponseEntity<List<BoletaVenta>> getByUsuario(@PathVariable Integer idUsuario) {
+        List<BoletaVenta> boletas = boletaVentaServicio.findByUsuarioId(idUsuario);
+        return ResponseEntity.ok(boletas);
+    }
+
     @PostMapping
     public ResponseEntity<BoletaVenta> create(@RequestBody BoletaVenta boletaVenta) {
         BoletaVenta saved = boletaVentaServicio.save(boletaVenta);

@@ -1,0 +1,8 @@
+/* Estilos mínimos - Bootstrap hace el resto */
+.nav-link:hover {
+  color: var(--bs-warning) !important;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(255, 193, 7, 0.1);
+}

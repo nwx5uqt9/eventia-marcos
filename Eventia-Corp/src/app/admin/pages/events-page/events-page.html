@@ -45,17 +45,31 @@
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
       @for (item of eventos(); track item.id) {
       <div class="col">
-        <app-card
+        <app-admin-event-card
           [title]="item.nombre"
           [description]="item.descripcion"
-          class="cards h-100"
-        >
-        </app-card>
+          [eventoId]="item.id"
+          (onEdit)="editarEvento($event)"
+          (onDelete)="eliminarEvento($event)"
+          class="h-100"
+        ></app-admin-event-card>
       </div>
       }
     </div>
   </div>
 
-  <!-- Modal -->
+  <!-- Modal Crear -->
   <app-modal-add-event [option]="typeData()"></app-modal-add-event>
+
+  <!-- Modal Editar -->
+  @if (mostrarModalEditar()) {
+    <app-modal-edit-evento
+      [evento]="eventoSeleccionado"
+      [tiposEvento]="tiposEvento()"
+      [estadosEvento]="estadosEvento()"
+      [organizadores]="organizadores()"
+      (onClose)="cerrarModalEditar()"
+      (onSave)="guardarEvento($event)"
+    ></app-modal-edit-evento>
+  }
 </div>

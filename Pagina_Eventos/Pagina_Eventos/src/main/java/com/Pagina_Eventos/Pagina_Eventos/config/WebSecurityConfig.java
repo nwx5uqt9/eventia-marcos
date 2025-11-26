@@ -20,50 +20,58 @@ import java.util.List;
 public class WebSecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                // Habilitar CORS con la configuración personalizada
+    protected SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
+                // Configurar CORS
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
-                // Deshabilitar CSRF para APIs REST (necesario para peticiones desde Angular)
+                // Deshabilitar CSRF para APIs REST
                 .csrf(csrf -> csrf.disable())
 
-                // Configuración de autorización de requests
+                // Configurar autorización de requests
                 .authorizeHttpRequests(auth -> auth
-                        // ⬇ Rutas públicas (NO piden autenticación)
+                        // Rutas públicas
                         .requestMatchers(
-                                "/auth/**",                   // Login y autenticación
-                                "/usuarios/create",           // Registro de usuarios
-                                "/usuarios/**",               // Operaciones de usuarios
-                                "/eventos/**",                // Eventos públicos
-                                "/boletos/**",                // Boletos
-                                "/tipo-evento/**",            // Tipos de evento
-                                "/estado-evento/**",          // Estados de evento
-                                "/ubicacion/**",              // Ubicaciones
-                                "/organizador/**",            // Organizadores
-                                "/rol-usuario/**",            // Roles
-                                "/boleta-venta/**",           // Boletas
-                                "/lista-boleto/**",           // Lista de boletos
-                                "/lista-boletos-pagados/**",  // Boletos pagados
-                                "/lista-evento/**"            // Lista de eventos
+                                "/auth/**",
+                                "/usuarios/create",
+                                "/eventos",
+                                "/eventos/{id}"
                         ).permitAll()
 
-                        // Todas las demás rutas requieren autenticación (deshabilitado por ahora)
-                        .anyRequest().permitAll()
+                        // Rutas que requieren rol ADMIN
+                        .requestMatchers(
+                                "/usuarios/**",
+                                "/eventos/**",
+                                "/boletos/**",
+                                "/ventas/**",
+                                "/rol-usuario/**",
+                                "/tipo-evento/**",
+                                "/estado-evento/**",
+                                "/ubicacion/**",
+                                "/organizador/**"
+                        ).hasRole("ADMIN")
+
+                        // Rutas autenticadas (cualquier rol)
+                        .requestMatchers(
+                                "/api/compras/**"
+                        ).authenticated()
+
+                        // Cualquier otra petición debe estar autenticada
+                        .anyRequest().authenticated()
                 )
 
-                // Deshabilitar formLogin ya que es una API REST
+                // Deshabilitar formLogin
                 .formLogin(form -> form.disable())
 
-                // Deshabilitar httpBasic ya que no lo usamos
+                // Deshabilitar httpBasic
                 .httpBasic(basic -> basic.disable())
 
-                // Configurar política de sesiones como STATELESS (sin sesiones, apropiado para REST APIs)
+                // Política de sesiones STATELESS
                 .sessionManagement(session ->
-                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 );
 
-        return http.build();
+        return httpSecurity.build();
     }
 
     /**
@@ -82,7 +90,7 @@ public class WebSecurityConfig {
         // Permitir todos los headers
         configuration.setAllowedHeaders(List.of("*"));
 
-        // Permitir credenciales (cookies, headers de autorización)
+        // Permitir credenciales
         configuration.setAllowCredentials(true);
 
         // Aplicar configuración a todas las rutas

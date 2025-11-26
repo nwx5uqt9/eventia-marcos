@@ -1,101 +1,337 @@
 @if (evento) {
-  <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content border-0 shadow-lg">
-        <!-- Header -->
-        <div class="modal-header bg-dark text-white border-0">
-          <h5 class="modal-title fw-bold">Comprar Boletos</h5>
-          <button type="button" class="btn-close btn-close-white" (click)="cerrar()"></button>
+  <div class="payment-overlay" (click)="cerrar()">
+    <div class="payment-gateway" (click)="$event.stopPropagation()">
+
+      <!-- Header -->
+      <div class="payment-header">
+        <div class="header-content">
+          <h2 class="header-title">Pasarela de Pago Segura</h2>
+          <p class="header-subtitle">Complete los datos para finalizar su compra</p>
         </div>
+        <button class="close-btn" (click)="cerrar()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
 
-        <!-- Body -->
-        <div class="modal-body p-4">
-          <!-- Información del Evento -->
-          <div class="mb-4 p-3 bg-light rounded-3">
-            <h6 class="fw-bold text-dark mb-2">{{ evento.nombre }}</h6>
-            <p class="text-muted mb-2 small">
-              {{ evento.fechaHora | date:'dd/MM/yyyy HH:mm' }}
-            </p>
-            <p class="text-muted mb-0 small">{{ evento.descripcion }}</p>
+      <!-- Progress Bar -->
+      <div class="progress-steps">
+        <div class="step" [class.active]="pasoActual >= 1" [class.completed]="pasoActual > 1">
+          <div class="step-circle">
+            <i class="bi" [class.bi-check-lg]="pasoActual > 1" [class.bi-1-circle]="pasoActual <= 1"></i>
           </div>
-
-          <!-- Cantidad -->
-          <div class="mb-4">
-            <label class="form-label fw-semibold">Cantidad de boletos</label>
-            <div class="input-group input-group-lg">
-              <button
-                class="btn btn-outline-secondary"
-                type="button"
-                (click)="decrementar()"
-                [disabled]="cantidad <= 1">
-                -
-              </button>
-              <input
-                type="number"
-                class="form-control text-center fw-bold"
-                [(ngModel)]="cantidad"
-                min="1"
-                max="10"
-                readonly>
-              <button
-                class="btn btn-outline-secondary"
-                type="button"
-                (click)="incrementar()"
-                [disabled]="cantidad >= 10">
-                +
-              </button>
-            </div>
-            <small class="text-muted">Máximo 10 boletos por compra</small>
-          </div>
-
-          <!-- Método de Pago -->
-          <div class="mb-4">
-            <label class="form-label fw-semibold">Método de Pago</label>
-            <select
-              class="form-select form-select-lg"
-              [(ngModel)]="metodoPago"
-              required>
-              <option value="" disabled selected>Seleccione un método de pago</option>
-              @for (metodo of metodosPago; track metodo.valor) {
-                <option [value]="metodo.valor">{{ metodo.nombre }}</option>
-              }
-            </select>
-          </div>
-
-          <!-- Resumen -->
-          <div class="card bg-warning bg-opacity-10 border-warning">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="text-dark">Precio por boleto:</span>
-                <span class="fw-bold">S/ {{ precioUnitario.toFixed(2) }}</span>
-              </div>
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="text-dark">Cantidad:</span>
-                <span class="fw-bold">{{ cantidad }}</span>
-              </div>
-              <hr>
-              <div class="d-flex justify-content-between align-items-center">
-                <span class="fs-5 fw-bold text-dark">Total:</span>
-                <span class="fs-4 fw-bold text-success">S/ {{ total.toFixed(2) }}</span>
-              </div>
-            </div>
-          </div>
+          <span class="step-label">Selección</span>
         </div>
-
-        <!-- Footer -->
-        <div class="modal-footer border-0 bg-light">
-          <button type="button" class="btn btn-secondary" (click)="cerrar()">
-            Cancelar
-          </button>
-          <button
-            type="button"
-            class="btn btn-warning text-dark fw-bold"
-            (click)="confirmarCompra()"
-            [disabled]="!metodoPago">
-            Confirmar Compra
-          </button>
+        <div class="step-line" [class.active]="pasoActual > 1"></div>
+        <div class="step" [class.active]="pasoActual >= 2" [class.completed]="pasoActual > 2">
+          <div class="step-circle">
+            <i class="bi" [class.bi-check-lg]="pasoActual > 2" [class.bi-2-circle]="pasoActual <= 2"></i>
+          </div>
+          <span class="step-label">Método de Pago</span>
+        </div>
+        <div class="step-line" [class.active]="pasoActual > 2"></div>
+        <div class="step" [class.active]="pasoActual >= 3">
+          <div class="step-circle">
+            <i class="bi bi-3-circle"></i>
+          </div>
+          <span class="step-label">Confirmación</span>
         </div>
       </div>
+
+      <!-- Content Area -->
+      <div class="payment-content">
+
+        <!-- Paso 1: Selección de Cantidad -->
+        @if (pasoActual === 1) {
+          <div class="step-content">
+            <div class="event-info-card">
+              <div class="event-badge">Evento Seleccionado</div>
+              <h3 class="event-title">{{ evento.nombre }}</h3>
+              <div class="event-details">
+                <div class="detail-item">
+                  <i class="bi bi-calendar3"></i>
+                  <span>{{ evento.fechaHora | date:'dd/MM/yyyy' }}</span>
+                </div>
+                <div class="detail-item">
+                  <i class="bi bi-clock"></i>
+                  <span>{{ evento.fechaHora | date:'HH:mm' }}</span>
+                </div>
+                <div class="detail-item">
+                  <i class="bi bi-geo-alt"></i>
+                  <span>{{ evento.ubicacion?.nombre || 'Por confirmar' }}</span>
+                </div>
+              </div>
+              <p class="event-description">{{ evento.descripcion }}</p>
+            </div>
+
+            <div class="quantity-selector">
+              <label class="section-label">Cantidad de Boletos</label>
+              <div class="quantity-controls">
+                <button class="quantity-btn" (click)="decrementar()" [disabled]="cantidad <= 1">
+                  <i class="bi bi-dash-lg"></i>
+                </button>
+                <div class="quantity-display">
+                  <span class="quantity-number">{{ cantidad }}</span>
+                  <span class="quantity-text">boleto{{ cantidad > 1 ? 's' : '' }}</span>
+                </div>
+                <button class="quantity-btn" (click)="incrementar()" [disabled]="cantidad >= 10">
+                  <i class="bi bi-plus-lg"></i>
+                </button>
+              </div>
+              <small class="help-text">Máximo 10 boletos por compra</small>
+            </div>
+
+            <div class="price-summary">
+              <div class="price-row">
+                <span>Precio por boleto</span>
+                <span class="price-value">S/ {{ precioUnitario.toFixed(2) }}</span>
+              </div>
+              <div class="price-row">
+                <span>Cantidad</span>
+                <span class="price-value">{{ cantidad }}</span>
+              </div>
+              <div class="price-row total">
+                <span>Subtotal</span>
+                <span class="price-value">S/ {{ subtotal.toFixed(2) }}</span>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Paso 2: Método de Pago -->
+        @if (pasoActual === 2) {
+          <div class="step-content">
+            <label class="section-label">Seleccione su Método de Pago</label>
+
+            <div class="payment-methods">
+              @for (metodo of metodosPago; track metodo.valor) {
+                <div class="payment-method-card"
+                     [class.selected]="metodoPagoSeleccionado === metodo.valor"
+                     (click)="seleccionarMetodoPago(metodo.valor)">
+                  <div class="method-icon">
+                    <i class="bi {{ metodo.icono }}"></i>
+                  </div>
+                  <div class="method-info">
+                    <h4 class="method-name">{{ metodo.nombre }}</h4>
+                    <p class="method-description">{{ metodo.descripcion }}</p>
+                  </div>
+                  <div class="method-check">
+                    <i class="bi bi-check-circle-fill"></i>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <div class="price-summary">
+              <div class="price-row">
+                <span>Subtotal</span>
+                <span class="price-value">S/ {{ subtotal.toFixed(2) }}</span>
+              </div>
+              <div class="price-row">
+                <span>Comisión de servicio (5%)</span>
+                <span class="price-value">S/ {{ comision.toFixed(2) }}</span>
+              </div>
+              <div class="price-row total">
+                <span>Total a Pagar</span>
+                <span class="price-value highlighted">S/ {{ total.toFixed(2) }}</span>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Paso 3: Confirmación y Datos de Pago -->
+        @if (pasoActual === 3) {
+          <div class="step-content">
+
+            <!-- Formulario para Tarjeta -->
+            @if (metodoPagoSeleccionado === 'tarjeta') {
+              <form [formGroup]="pagoForm" class="payment-form">
+                <label class="section-label">Información de la Tarjeta</label>
+
+                <div class="form-group">
+                  <label class="form-label">Número de Tarjeta</label>
+                  <div class="input-with-icon">
+                    <i class="bi bi-credit-card"></i>
+                    <input
+                      type="text"
+                      class="form-input"
+                      placeholder="1234 5678 9012 3456"
+                      (input)="formatearTarjeta($event)"
+                      maxlength="19">
+                  </div>
+                  @if (pagoForm.get('numeroTarjeta')?.invalid && pagoForm.get('numeroTarjeta')?.touched) {
+                    <small class="error-text">Número de tarjeta inválido</small>
+                  }
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Nombre del Titular</label>
+                  <div class="input-with-icon">
+                    <i class="bi bi-person"></i>
+                    <input
+                      type="text"
+                      class="form-input"
+                      placeholder="Como aparece en la tarjeta"
+                      formControlName="nombreTitular">
+                  </div>
+                  @if (pagoForm.get('nombreTitular')?.invalid && pagoForm.get('nombreTitular')?.touched) {
+                    <small class="error-text">Nombre requerido</small>
+                  }
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Fecha de Expiración</label>
+                    <div class="input-with-icon">
+                      <i class="bi bi-calendar3"></i>
+                      <input
+                        type="text"
+                        class="form-input"
+                        placeholder="MM/AA"
+                        (input)="formatearFecha($event)"
+                        maxlength="5">
+                    </div>
+                    @if (pagoForm.get('fechaExpiracion')?.invalid && pagoForm.get('fechaExpiracion')?.touched) {
+                      <small class="error-text">Fecha inválida</small>
+                    }
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">CVV</label>
+                    <div class="input-with-icon">
+                      <i class="bi bi-shield-lock"></i>
+                      <input
+                        type="text"
+                        class="form-input"
+                        placeholder="123"
+                        formControlName="cvv"
+                        maxlength="4">
+                    </div>
+                    @if (pagoForm.get('cvv')?.invalid && pagoForm.get('cvv')?.touched) {
+                      <small class="error-text">CVV inválido</small>
+                    }
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Email</label>
+                  <div class="input-with-icon">
+                    <i class="bi bi-envelope"></i>
+                    <input
+                      type="email"
+                      class="form-input"
+                      placeholder="correo@ejemplo.com"
+                      formControlName="email">
+                  </div>
+                  @if (pagoForm.get('email')?.invalid && pagoForm.get('email')?.touched) {
+                    <small class="error-text">Email inválido</small>
+                  }
+                </div>
+              </form>
+            }
+
+            <!-- Información para Yape/Plin -->
+            @if (metodoPagoSeleccionado === 'yape' || metodoPagoSeleccionado === 'plin') {
+              <div class="mobile-payment-info">
+                <div class="info-icon">
+                  <i class="bi bi-phone-fill"></i>
+                </div>
+                <h3 class="info-title">Instrucciones de Pago</h3>
+                <ol class="instructions-list">
+                  <li>Abra su aplicación de {{ metodoPagoSeleccionado === 'yape' ? 'Yape' : 'Plin' }}</li>
+                  <li>Escanee el código QR que aparecerá después de confirmar</li>
+                  <li>Confirme el pago por S/ {{ total.toFixed(2) }}</li>
+                  <li>Recibirá sus boletos por correo electrónico</li>
+                </ol>
+              </div>
+            }
+
+            <!-- Información para Efectivo -->
+            @if (metodoPagoSeleccionado === 'efectivo') {
+              <div class="mobile-payment-info">
+                <div class="info-icon">
+                  <i class="bi bi-cash-stack"></i>
+                </div>
+                <h3 class="info-title">Pago en Efectivo</h3>
+                <p class="info-description">
+                  Deberá realizar el pago en cualquiera de nuestros puntos de venta autorizados
+                  antes del evento. Recibirá un código de reserva que deberá presentar al momento del pago.
+                </p>
+                <div class="reservation-code">
+                  <span>Código de Reserva:</span>
+                  <strong>{{ codigoReserva }}</strong>
+                </div>
+              </div>
+            }
+
+            <!-- Resumen Final -->
+            <div class="final-summary">
+              <div class="summary-header">
+                <i class="bi bi-receipt"></i>
+                <span>Resumen de Compra</span>
+              </div>
+              <div class="summary-details">
+                <div class="summary-row">
+                  <span>Evento:</span>
+                  <strong>{{ evento.nombre }}</strong>
+                </div>
+                <div class="summary-row">
+                  <span>Cantidad:</span>
+                  <strong>{{ cantidad }} boleto{{ cantidad > 1 ? 's' : '' }}</strong>
+                </div>
+                <div class="summary-row">
+                  <span>Método de pago:</span>
+                  <strong>{{ getNombreMetodoPago() }}</strong>
+                </div>
+                <div class="summary-row total-row">
+                  <span>Total:</span>
+                  <strong class="total-amount">S/ {{ total.toFixed(2) }}</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="security-badge">
+              <i class="bi bi-shield-check"></i>
+              <span>Pago 100% seguro y encriptado</span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Footer Actions -->
+      <div class="payment-footer">
+        @if (pasoActual > 1) {
+          <button class="btn btn-secondary" (click)="pasoAnterior()" [disabled]="procesandoPago">
+            <i class="bi bi-arrow-left"></i>
+            Anterior
+          </button>
+        }
+
+        @if (pasoActual < 3) {
+          <button
+            class="btn btn-primary"
+            (click)="siguientePaso()"
+            [disabled]="(pasoActual === 2 && !metodoPagoSeleccionado)">
+            Continuar
+            <i class="bi bi-arrow-right"></i>
+          </button>
+        }
+
+        @if (pasoActual === 3) {
+          <button
+            class="btn btn-success"
+            (click)="confirmarCompra()"
+            [disabled]="procesandoPago">
+            @if (procesandoPago) {
+              <span class="spinner"></span>
+              Procesando...
+            } @else {
+              <i class="bi bi-check-circle"></i>
+              Confirmar Pago
+            }
+          </button>
+        }
+      </div>
+
     </div>
   </div>
 }

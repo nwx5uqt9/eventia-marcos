@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { AuthGuard } from './shared/guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -17,11 +18,9 @@ export const routes: Routes = [
   {
     path: 'admin',
     loadComponent: () => import('./admin/pages/index-page/index-page'),
+    canActivate: [AuthGuard],
+    data: { roles: [1] }, // Solo rol Administrador
     children: [
-      // {
-      //   path: 'dashboard',
-      //   loadComponent: () => import('./admin/pages/dashboard-page/dashboard-page'),
-      // },
       {
         path: 'events',
         loadComponent: () => import('./admin/pages/events-page/events-page'),
@@ -49,20 +48,19 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'control',
-    loadComponent: () => import('./control/pages/index-page/index-page'),
-  },
-  {
     path: 'client',
     loadComponent: () => import('./client/pages/index-page/index-page'),
     children: [
       {
         path: 'events',
         loadComponent: () => import('./client/pages/events-page/events-page'),
+        // Accesible para todos (sin guard)
       },
       {
         path: 'tickets',
         loadComponent: () => import('./client/pages/tickets-page/tickets-page'),
+        canActivate: [AuthGuard],
+        data: { roles: [1, 2, 3] }, // Todos los roles autenticados
       },
       {
         path: '**',
@@ -72,6 +70,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'index',
+    redirectTo: 'client/events',
   },
 ];

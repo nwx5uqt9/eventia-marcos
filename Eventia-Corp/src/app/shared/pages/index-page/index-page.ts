@@ -28,12 +28,9 @@ export default class IndexPage implements OnInit {
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
-    // Verificar si ya está logueado
+    // Verificar si ya está logueado, redirigir a eventos
     if (this.authService.isLoggedIn()) {
-      const user = this.authService.getCurrentUser();
-      if (user) {
-        this.redirectByRole(user.rolUsuario?.id);
-      }
+      window.location.href = '/#/client/events';
     }
   }
 
@@ -61,21 +58,5 @@ export default class IndexPage implements OnInit {
         this.cargando = false;
       }
     });
-  }
-
-  private redirectByRole(rolId: number | null | undefined): void {
-    switch(rolId) {
-      case 1: // Administrador
-        window.location.href = '/#/admin';
-        break;
-      case 2: // Organizador
-        window.location.href = '/#/control';
-        break;
-      case 3: // Cliente
-        window.location.href = '/#/client';
-        break;
-      default:
-        window.location.href = '/#/index';
-    }
   }
 }

@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import {Router, RouterLink} from "@angular/router";
 import { SidebarCollapseService } from 'src/app/shared/services/sidebar-collapse';
-import {AuthService} from '../../../shared/services/auth.service';
+import { AuthService } from '../../../shared/services/auth.service';
 
 @Component({
   selector: 'app-navbar-admin',
-  imports: [RouterLink],
+  standalone: true,
+  imports: [],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

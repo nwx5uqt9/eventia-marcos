@@ -104,13 +104,10 @@ export class AuthService {
 
     // Redirigir según el rol
     if (rolId === 1 || rolNombre === 'administrador') {
-      this.router.navigate(['/admin']);
-    } else if (rolId === 2 || rolNombre === 'organizador') {
-      this.router.navigate(['/control']);
-    } else if (rolId === 3 || rolNombre === 'cliente') {
-      this.router.navigate(['/client']);
+      this.router.navigate(['/admin/events']);
     } else {
-      this.router.navigate(['/index']);
+      // Organizadores y Clientes van a eventos
+      this.router.navigate(['/client/events']);
     }
   }
 
@@ -118,7 +115,7 @@ export class AuthService {
     localStorage.removeItem('currentUser');
     localStorage.removeItem('isLoggedIn');
     this.currentUserSubject.next(null);
-    this.router.navigate(['/index']);
+    this.router.navigate(['/client/events']);
   }
 
   getCurrentUser(): any {

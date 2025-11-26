@@ -2,6 +2,11 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
+    path: '',
+    redirectTo: 'client/events',
+    pathMatch: 'full'
+  },
+  {
     path: 'index',
     loadComponent: () => import('./shared/pages/index-page/index-page'),
   },

@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from 'src/app/shared/services/auth.service';
 
 @Component({
@@ -12,20 +12,31 @@ import { AuthService } from 'src/app/shared/services/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarClient implements OnInit {
-  currentUser: any = null;
-  userName: string = '';
+  currentUser = signal<any>(null);
+  userName = signal<string>('');
 
   constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {}
+    private authService: AuthService
+  ) {
+    // Use effect to update signals when currentUser changes
+    effect(() => {
+      const user = this.currentUser();
+      if (user) {
+        this.userName.set(user.nombre || user.nombreusuario || 'Usuario');
+      } else {
+        this.userName.set('');
+      }
+    });
+  }
 
   ngOnInit(): void {
+    // Set initial value
+    const user = this.authService.getCurrentUser();
+    this.currentUser.set(user);
+
+    // Subscribe to changes
     this.authService.currentUser$.subscribe(user => {
-      this.currentUser = user;
-      if (user) {
-        this.userName = user.nombre || user.nombreusuario || 'Usuario';
-      }
+      this.currentUser.set(user);
     });
   }
 

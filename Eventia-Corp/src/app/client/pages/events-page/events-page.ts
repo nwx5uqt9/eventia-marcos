@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { Card } from 'src/app/shared/components/card/card';
 import { ModalCompra } from '../../components/modal-compra/modal-compra';
 import { EventoService } from 'src/app/shared/services/evento.service';
@@ -29,11 +30,28 @@ export default class ClientEventsPage implements OnInit {
   constructor(
     private eventoService: EventoService,
     private compraService: CompraService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.cargarEventos();
+
+    // Verificar si hay una compra pendiente después del login
+    const pendingPurchase = localStorage.getItem('pendingPurchase');
+    if (pendingPurchase && this.authService.isLoggedIn()) {
+      const eventoId = parseInt(pendingPurchase);
+      localStorage.removeItem('pendingPurchase');
+
+      // Buscar el evento y abrir el modal
+      const evento = this.eventos().find(e => e.id === eventoId);
+      if (evento) {
+        setTimeout(() => {
+          this.eventoSeleccionado = evento;
+          this.mostrarModal.set(true);
+        }, 500);
+      }
+    }
   }
 
   cargarEventos() {
@@ -66,6 +84,21 @@ export default class ClientEventsPage implements OnInit {
   }
 
   abrirModalCompra(evento: Evento): void {
+    // Verificar si el usuario está autenticado
+    if (!this.authService.isLoggedIn()) {
+      // Guardar el evento que quiere comprar
+      localStorage.setItem('pendingPurchase', evento.id!.toString());
+
+      // Guardar la URL actual para regresar después del login
+      this.authService.setRedirectUrl('/client/events');
+
+      // Mostrar mensaje y redirigir al login
+      alert('Debes iniciar sesión para realizar una compra');
+      this.router.navigate(['/index']);
+      return;
+    }
+
+    // Si está autenticado, abrir el modal
     this.eventoSeleccionado = evento;
     this.mostrarModal.set(true);
   }

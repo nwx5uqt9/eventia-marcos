@@ -34,6 +34,7 @@ export class AuthService {
   private baseUrl = 'http://localhost:8082';
   private currentUserSubject = new BehaviorSubject<any | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
+  private redirectUrl: string | null = null;
 
   constructor(
     private http: HttpClient,
@@ -44,6 +45,20 @@ export class AuthService {
     if (storedUser) {
       this.currentUserSubject.next(JSON.parse(storedUser));
     }
+  }
+
+  setRedirectUrl(url: string): void {
+    this.redirectUrl = url;
+    localStorage.setItem('redirectUrl', url);
+  }
+
+  getRedirectUrl(): string | null {
+    return this.redirectUrl || localStorage.getItem('redirectUrl');
+  }
+
+  clearRedirectUrl(): void {
+    this.redirectUrl = null;
+    localStorage.removeItem('redirectUrl');
   }
 
   /**
@@ -65,8 +80,15 @@ export class AuthService {
           localStorage.setItem('isLoggedIn', 'true');
           this.currentUserSubject.next(response.usuario);
 
-          // Redirigir según el rol
-          this.redirectByRole(response.usuario);
+          // Verificar si hay una URL de redirección guardada
+          const redirectUrl = this.getRedirectUrl();
+          if (redirectUrl) {
+            this.clearRedirectUrl();
+            this.router.navigateByUrl(redirectUrl);
+          } else {
+            // Redirigir según el rol
+            this.redirectByRole(response.usuario);
+          }
         }
       }),
       catchError(error => {

@@ -30,34 +30,16 @@ public class WebSecurityConfig {
 
                 // Configurar autorización de requests
                 .authorizeHttpRequests(auth -> auth
-                        // Rutas públicas
-                        .requestMatchers(
-                                "/auth/**",
-                                "/usuarios/create",
-                                "/eventos",
-                                "/eventos/{id}"
-                        ).permitAll()
+                        // MODO DESARROLLO: Permitir todas las rutas
+                        // Cuando implementes JWT, cambia esto a roles específicos
+                        .anyRequest().permitAll()
 
-                        // Rutas que requieren rol ADMIN
-                        .requestMatchers(
-                                "/usuarios/**",
-                                "/eventos/**",
-                                "/boletos/**",
-                                "/ventas/**",
-                                "/rol-usuario/**",
-                                "/tipo-evento/**",
-                                "/estado-evento/**",
-                                "/ubicacion/**",
-                                "/organizador/**"
-                        ).hasRole("ADMIN")
-
-                        // Rutas autenticadas (cualquier rol)
-                        .requestMatchers(
-                                "/api/compras/**"
-                        ).authenticated()
-
-                        // Cualquier otra petición debe estar autenticada
+                        /* CONFIGURACIÓN PARA PRODUCCIÓN CON JWT:
+                        .requestMatchers("/auth/**", "/usuarios/create", "/eventos").permitAll()
+                        .requestMatchers("/usuarios/**", "/eventos/**", "/boletos/**").hasRole("ADMIN")
+                        .requestMatchers("/api/compras/**").authenticated()
                         .anyRequest().authenticated()
+                        */
                 )
 
                 // Deshabilitar formLogin

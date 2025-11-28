@@ -90,19 +90,29 @@
 </div>
 <!-- Cards Events -->
 <div class="container">
-  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
-    @for (item of dataCard; track item.id) {
-    <div class="col">
-      <app-card
-        [title]="item.title"
-        [description]="item.description"
-        [imageUrl]="item.imageUrl"
-        class="cards h-100"
-      >
-      </app-card>
+  @if (eventos().length > 0) {
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
+      @for (evento of eventos(); track evento.id) {
+        <div class="col">
+          <app-card
+            [title]="evento.nombre"
+            [description]="evento.descripcion"
+            [precio]="getPrecio(evento)"
+            [ubicacion]="getUbicacion(evento)"
+            imageUrl="img/micro-eventos.png"
+            buttonText="Ver más"
+            buttonClass="btn-warning text-dark fw-bold"
+            class="cards h-100"
+          >
+          </app-card>
+        </div>
+      }
     </div>
-    }
-  </div>
+  } @else {
+    <div class="text-center py-5">
+      <p class="text-muted">Cargando eventos...</p>
+    </div>
+  }
 </div>
 
 <!-- Footer -->
@@ -154,7 +164,7 @@
         <h6>Información de Contacto</h6>
         <p><i class="fas fa-map-marker-alt me-2"></i>Calle Rodriguez Ballón 207-A</p>
         <p><i class="fas fa-phone me-2"></i>+51 963023181</p>
-        <p><i class="fas fa-envelope me-2"></i>contacto@eventicorp.com.pe</p>
+        <p><i class="fas fa-envelope me-2"></i>contacto{{'@'}}eventicorp.com.pe</p>
         <p><i class="fas fa-clock me-2"></i>Atención 24/7 Online</p>
       </div>
     </div>

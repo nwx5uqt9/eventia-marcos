@@ -43,13 +43,24 @@ export default class UsersPage implements OnInit {
   }
 
   listaUsuario(){
-    this.usuarioService.getUsuarioLista().subscribe(
-      data => {
+    console.log('Cargando lista de usuarios...');
+    this.usuarioService.getUsuarioLista().subscribe({
+      next: (data) => {
         this.usuario = data;
-        console.log(this.usuario);
+        console.log('Usuarios cargados:', this.usuario.length, 'usuarios');
+        console.log('Datos:', this.usuario);
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        console.error('Error al cargar usuarios:', error);
+        console.error('Status:', error.status);
+        console.error('Mensaje:', error.message);
+        if (error.status === 403) {
+          console.error('Error 403: Acceso denegado. Verifica la autenticación y permisos.');
+        }
         this.cdr.markForCheck();
       }
-    );
+    });
   }
 
   deleteUsuario(id: number){

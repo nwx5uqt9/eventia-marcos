@@ -15,13 +15,16 @@ public class Ubicacion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false, length = 150)
+   @Column(nullable = false, length = 255)
     private String nombre;
+
+    @Column(length = 255)
+    private String direccion;
+
+    @Column
+    private Integer capacidad;
 
     @Column(columnDefinition = "TEXT")
     private String descripcion;
-
-    @Column(nullable = false)
-    private Integer capacidad;
 }
 

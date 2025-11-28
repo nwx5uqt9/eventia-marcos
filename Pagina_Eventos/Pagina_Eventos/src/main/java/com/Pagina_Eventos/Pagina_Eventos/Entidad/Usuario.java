@@ -46,7 +46,7 @@ public class Usuario {
     @Column(length = 255)
     private String direccion;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_rol_usuario", nullable = false)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private RolUsuario rolUsuario;

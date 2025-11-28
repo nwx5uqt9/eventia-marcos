@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { ModalStateService } from 'src/app/shared/services/modalState';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -12,6 +12,7 @@ import { FormAddTypeEvent } from 'src/app/admin/components/forms/form-add-type-e
 
 @Component({
   selector: 'app-modal-add-event',
+  standalone: true,
   imports: [
     FormsModule,
     CommonModule,

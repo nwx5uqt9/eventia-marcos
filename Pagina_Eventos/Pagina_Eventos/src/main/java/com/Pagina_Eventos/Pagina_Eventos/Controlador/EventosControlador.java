@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/eventos")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 public class EventosControlador {
 
     private final EventosServicio eventosServicio;
@@ -47,6 +47,8 @@ public class EventosControlador {
                     existing.setTipoEvento(eventos.getTipoEvento());
                     existing.setOrganizador(eventos.getOrganizador());
                     existing.setEstadoEvento(eventos.getEstadoEvento());
+                    existing.setUbicacion(eventos.getUbicacion());
+                    existing.setPrecio(eventos.getPrecio());
                     return ResponseEntity.ok(eventosServicio.save(existing));
                 })
                 .orElse(ResponseEntity.notFound().build());

@@ -9,6 +9,7 @@ import { ModalStateService } from 'src/app/shared/services/modalState';
 
 @Component({
   selector: 'app-form-add-event',
+  standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './form-add-event.html',
   styleUrl: './form-add-event.css',
@@ -36,7 +37,9 @@ export class FormAddEvent implements OnInit {
       fechaHora: ['', Validators.required],
       tipoEvento: [null, Validators.required],
       organizador: [null, Validators.required],
-      estadoEvento: [null, Validators.required]
+      estadoEvento: [null, Validators.required],
+      ubicacion: ['', Validators.required],
+      precio: ['', [Validators.required, Validators.min(0)]]
     });
   }
 
@@ -74,7 +77,9 @@ export class FormAddEvent implements OnInit {
         fechaHora: formValue.fechaHora,
         tipoEvento: { id: parseInt(formValue.tipoEvento) },
         organizador: { id: parseInt(formValue.organizador) },
-        estadoEvento: { id: parseInt(formValue.estadoEvento) }
+        estadoEvento: { id: parseInt(formValue.estadoEvento) },
+        ubicacion: formValue.ubicacion || null,
+        precio: parseFloat(formValue.precio) || 0
       };
 
       this.eventoService.create(evento).subscribe({

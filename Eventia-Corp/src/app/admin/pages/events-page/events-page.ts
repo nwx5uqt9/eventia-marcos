@@ -16,6 +16,7 @@ import { Organizador } from 'src/app/organizador';
 
 @Component({
   selector: 'app-events-page',
+  standalone: true,
   imports: [FormsModule, ModalAddEvent, ModalEditEvento, CommonModule, AdminEventCard],
   templateUrl: './events-page.html',
   styleUrl: './events-page.css',
@@ -31,6 +32,7 @@ export default class EventsPage implements OnInit {
   mostrarModalEditar = signal<boolean>(false);
 
   typeData = signal('event');
+  codigo: string = ''; // Variable para el filtro de búsqueda
 
   constructor(
     private modalState: ModalStateService,

@@ -73,6 +73,8 @@
               <app-card
                 [title]="evento.nombre"
                 [description]="evento.descripcion"
+                [precio]="getPrecio(evento)"
+                [ubicacion]="getUbicacion(evento)"
                 imageUrl="img/micro-eventos.png"
                 buttonText="Comprar"
                 buttonClass="btn-warning text-dark fw-bold"

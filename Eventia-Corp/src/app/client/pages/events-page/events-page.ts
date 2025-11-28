@@ -55,25 +55,32 @@ export default class ClientEventsPage implements OnInit {
   }
 
   cargarEventos() {
+    console.log('Iniciando carga de eventos desde el backend...');
     this.eventoService.getAll().subscribe({
       next: (data) => {
+        console.log('Respuesta del backend - Total eventos:', data.length);
+        console.log('Eventos recibidos:', data);
+
         // Filtrar solo eventos activos para usuarios
         const eventosActivos = data.filter((evento: Evento) =>
           evento.estadoEvento?.id === 1 || evento.estadoEvento?.nombre?.toLowerCase() === 'activo'
         );
+
+        console.log('Eventos activos filtrados:', eventosActivos.length);
+        console.log('Eventos activos:', eventosActivos);
+
         this.eventos.set(eventosActivos);
-        console.log('Eventos activos cargados para cliente');
+
+        // Limpiar localStorage para evitar confusión
+        localStorage.removeItem('eventos');
       },
       error: (err) => {
-        console.error('Error al cargar eventos:', err);
-        const eventosGuardados = localStorage.getItem('eventos');
-        if (eventosGuardados) {
-          const eventos = JSON.parse(eventosGuardados);
-          const eventosActivos = eventos.filter((evento: Evento) =>
-            evento.estadoEvento?.id === 1 || evento.estadoEvento?.nombre?.toLowerCase() === 'activo'
-          );
-          this.eventos.set(eventosActivos);
-        }
+        console.error('Error al cargar eventos desde el backend:', err);
+        console.error('Código de error:', err.status);
+        console.error('Mensaje:', err.message);
+
+        // NO usar localStorage como fallback, mejor mostrar mensaje de error
+        this.eventos.set([]);
       },
     });
   }
@@ -81,6 +88,14 @@ export default class ClientEventsPage implements OnInit {
   buscarEventos() {
     // Implementar logica de busqueda si es necesario
     console.log('Buscando eventos...');
+  }
+
+  getPrecio(evento: any): number | undefined {
+    return evento?.precio;
+  }
+
+  getUbicacion(evento: any): string | undefined {
+    return evento?.ubicacion;
   }
 
   abrirModalCompra(evento: Evento): void {
@@ -116,12 +131,13 @@ export default class ClientEventsPage implements OnInit {
       return;
     }
 
+    const precioEvento = (data.evento as any).precio || 0;
     const compraRequest = {
       idUsuario: usuario.id,
       idEvento: data.evento.id!,
       cantidad: data.cantidad,
       metodoPago: data.metodoPago,
-      total: data.cantidad * 50.00
+      total: data.cantidad * precioEvento
     };
 
     this.compraService.registrarCompra(compraRequest).subscribe({

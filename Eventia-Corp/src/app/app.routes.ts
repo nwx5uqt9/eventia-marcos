@@ -19,7 +19,7 @@ export const routes: Routes = [
     path: 'admin',
     loadComponent: () => import('./admin/pages/index-page/index-page'),
     canActivate: [AuthGuard],
-    data: { roles: [1] }, // Solo rol Administrador
+    data: { roles: [2] }, // Solo rol Administrador (ID 2)
     children: [
       {
         path: 'events',
@@ -60,7 +60,8 @@ export const routes: Routes = [
         path: 'tickets',
         loadComponent: () => import('./client/pages/tickets-page/tickets-page'),
         canActivate: [AuthGuard],
-        data: { roles: [1, 2, 3] }, // Todos los roles autenticados
+        // Sin restricción de roles específicos - cualquier usuario autenticado puede acceder
+        // Esto permite que roles personalizados creados desde utilities también accedan
       },
       {
         path: '**',

@@ -47,14 +47,11 @@ export default class ClientTicketsPage implements OnInit {
       return;
     }
 
-    // Obtener todas las boletas y filtrar por usuario
-    this.boletaVentaService.getAll().subscribe({
+    // Obtener las boletas del usuario específico desde el backend
+    this.boletaVentaService.getByUsuario(usuario.id).subscribe({
       next: (boletas: BoletaVenta[]) => {
-        // Filtrar solo las boletas del usuario actual
-        const boletasUsuario = boletas.filter(b => b.usuario?.id === usuario.id);
-
         // Convertir a formato Boleto
-        const boletosConvertidos: Boleto[] = boletasUsuario.map(b => ({
+        const boletosConvertidos: Boleto[] = boletas.map(b => ({
           id: b.id,
           eventoNombre: b.evento?.nombre || 'Evento sin nombre',
           fecha: this.formatearFecha(b.evento?.fechaHora),
@@ -69,7 +66,7 @@ export default class ClientTicketsPage implements OnInit {
 
         this.boletos.set(boletosConvertidos);
         this.cargando.set(false);
-        console.log(`${boletosConvertidos.length} boletos cargados para el usuario`);
+        console.log(`${boletosConvertidos.length} boletos cargados para el usuario ${usuario.id}`);
       },
       error: (err) => {
         console.error('Error al cargar boletos:', err);
@@ -110,14 +107,14 @@ export default class ClientTicketsPage implements OnInit {
     return 'activo';
   }
 
-  verDetalle(boleto: Boleto) {
-    console.log('Ver detalle de boleto:', boleto);
-    alert(`Detalle del Boleto\n\nCódigo: ${boleto.codigo}\nEvento: ${boleto.eventoNombre}\nFecha: ${boleto.fecha}\nHora: ${boleto.hora}\nCantidad: ${boleto.cantidad}\nTotal: S/ ${boleto.precio.toFixed(2)}\nMétodo de Pago: ${boleto.metodoPago}`);
-  }
-
   descargarBoleto(boleto: Boleto) {
-    console.log('Descargar boleto:', boleto);
-    alert(`Descarga de boleto no implementada aún.\n\nCódigo: ${boleto.codigo}\nEvento: ${boleto.eventoNombre}`);
+    console.log('Descargando boleto:', boleto);
+
+    // Construir la URL del endpoint
+    const url = `http://localhost:8082/ventas/${boleto.id}/boleta/pdf`;
+
+    // Abrir en nueva ventana para descargar el PDF
+    window.open(url, '_blank');
   }
 
   getEstadoBadgeClass(estado: string): string {

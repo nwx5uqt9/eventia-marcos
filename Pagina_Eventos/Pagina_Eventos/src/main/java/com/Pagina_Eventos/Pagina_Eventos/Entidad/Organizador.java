@@ -15,13 +15,19 @@ public class Organizador {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "nombre_empresa", nullable = false, length = 150)
+    @Column(name = "nombre_empresa", nullable = false, length = 255)
     private String nombreEmpresa;
 
-    @Column(columnDefinition = "TEXT")
-    private String descripcion;
+    @Column(length = 100)
+    private String contacto;
+
+    @Column(length = 100)
+    private String email;
 
     @Column(length = 20)
     private String telefono;
+
+    @Column(columnDefinition = "TEXT")
+    private String descripcion;
 }
 

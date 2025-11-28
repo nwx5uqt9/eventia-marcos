@@ -90,6 +90,31 @@
                 </select>
               </div>
             </div>
+
+            <!-- Ubicación -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Ubicación</label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="eventoEditado.ubicacion"
+                name="ubicacion"
+                placeholder="Ej: Estadio Nacional, Auditorio Municipal, etc.">
+            </div>
+
+            <!-- Precio -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Precio (S/)</label>
+              <input
+                type="number"
+                class="form-control"
+                [(ngModel)]="eventoEditado.precio"
+                name="precio"
+                step="0.01"
+                min="0"
+                placeholder="Ej: 50.00"
+                required>
+            </div>
           </form>
         </div>
 

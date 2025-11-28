@@ -100,13 +100,15 @@ export class AuthService {
 
   private redirectByRole(user: any): void {
     const rolId = user.rolUsuario?.id;
-    const rolNombre = user.rolUsuario?.rol?.toLowerCase();
 
     // Redirigir según el rol
-    if (rolId === 1 || rolNombre === 'administrador') {
-      this.router.navigate(['/admin/events']);
+    // Solo ADMIN (id: 2) va a /admin/users
+    // Todos los demás (id: 3 = CLIENTE, id: 4 = ORGANIZADOR, etc.) van a /client/events
+    if (rolId === 2) {
+      console.log('Redirigiendo a zona administrativa - Users');
+      this.router.navigate(['/admin/users']);
     } else {
-      // Organizadores y Clientes van a eventos
+      console.log('Redirigiendo a zona cliente - Events');
       this.router.navigate(['/client/events']);
     }
   }
@@ -128,17 +130,40 @@ export class AuthService {
 
   isAdmin(): boolean {
     const user = this.currentUserSubject.value;
-    return user?.rolUsuario?.id === 1 || user?.rolUsuario?.rol?.toLowerCase() === 'administrador';
+    return user?.rolUsuario?.id === 2;
   }
 
   isOrganizador(): boolean {
     const user = this.currentUserSubject.value;
-    return user?.rolUsuario?.id === 2 || user?.rolUsuario?.rol?.toLowerCase() === 'organizador';
+    return user?.rolUsuario?.id === 4;
   }
 
   isCliente(): boolean {
     const user = this.currentUserSubject.value;
-    return user?.rolUsuario?.id === 3 || user?.rolUsuario?.rol?.toLowerCase() === 'cliente';
+    return user?.rolUsuario?.id === 3;
+  }
+
+  /**
+   * Verifica si el usuario tiene un rol específico por ID o nombre
+   * Útil para roles dinámicos agregados desde utilities
+   */
+  hasRole(rolIdOrName: number | string): boolean {
+    const user = this.currentUserSubject.value;
+    if (!user || !user.rolUsuario) return false;
+
+    if (typeof rolIdOrName === 'number') {
+      return user.rolUsuario.id === rolIdOrName;
+    } else {
+      return user.rolUsuario.rol?.toLowerCase() === rolIdOrName.toLowerCase();
+    }
+  }
+
+  /**
+   * Obtiene el rol actual del usuario
+   */
+  getCurrentRole(): { id: number; rol: string; descripcion: string } | null {
+    const user = this.currentUserSubject.value;
+    return user?.rolUsuario || null;
   }
 }
 

@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/boletos")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 public class BoletoControlador {
 
     private final BoletoServicio boletoServicio;

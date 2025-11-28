@@ -3,6 +3,7 @@ package com.Pagina_Eventos.Pagina_Eventos.Controlador;
 import com.Pagina_Eventos.Pagina_Eventos.Entidad.BoletaVenta;
 import com.Pagina_Eventos.Pagina_Eventos.servicio.BoletaVentaServicio;
 import com.Pagina_Eventos.Pagina_Eventos.servicio.VentasPdfService;
+import com.Pagina_Eventos.Pagina_Eventos.servicio.BoletosPdfService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,15 +14,17 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/ventas")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 public class BoletaVentaControlador {
 
     private final BoletaVentaServicio boletaVentaServicio;
     private final VentasPdfService ventasPdfService;
+    private final BoletosPdfService boletosPdfService;
 
-    public BoletaVentaControlador(BoletaVentaServicio boletaVentaServicio, VentasPdfService ventasPdfService) {
+    public BoletaVentaControlador(BoletaVentaServicio boletaVentaServicio, VentasPdfService ventasPdfService, BoletosPdfService boletosPdfService) {
         this.boletaVentaServicio = boletaVentaServicio;
         this.ventasPdfService = ventasPdfService;
+        this.boletosPdfService = boletosPdfService;
     }
 
     @GetMapping
@@ -79,6 +82,23 @@ public class BoletaVentaControlador {
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
+            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/{id}/boleta/pdf")
+    public ResponseEntity<byte[]> descargarBoletaPdf(@PathVariable Integer id) {
+        try {
+            byte[] pdfBytes = boletosPdfService.generarBoletaPdf(id);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("attachment", "boleta_" + id + ".pdf");
+            headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+
             headers.setContentDispositionFormData("attachment", "reporte_ventas.pdf");
             headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
 

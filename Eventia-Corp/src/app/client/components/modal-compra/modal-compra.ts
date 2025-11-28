@@ -17,12 +17,15 @@ export class ModalCompra {
 
   pasoActual: number = 1;
   cantidad: number = 1;
-  precioUnitario: number = 50.00;
   metodoPagoSeleccionado: string = '';
   codigoReserva: string = '';
 
   pagoForm: FormGroup;
   procesandoPago: boolean = false;
+
+  get precioUnitario(): number {
+    return (this.evento as any)?.precio || 50.00;
+  }
 
   metodosPago = [
     {

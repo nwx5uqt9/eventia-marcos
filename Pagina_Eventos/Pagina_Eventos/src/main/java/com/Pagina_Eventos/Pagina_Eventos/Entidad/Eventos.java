@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -40,5 +41,11 @@ public class Eventos {
     @JoinColumn(name = "id_estado", nullable = false)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private EstadoEvento estadoEvento;
+
+    @Column(name = "ubicacion", length = 255)
+    private String ubicacion;
+
+    @Column(name = "precio", precision = 10, scale = 2, nullable = false)
+    private BigDecimal precio;
 }
 

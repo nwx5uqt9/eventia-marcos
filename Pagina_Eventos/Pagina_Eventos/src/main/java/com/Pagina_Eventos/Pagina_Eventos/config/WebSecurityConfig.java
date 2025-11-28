@@ -2,6 +2,8 @@ package com.Pagina_Eventos.Pagina_Eventos.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -19,38 +21,49 @@ import java.util.List;
 @EnableWebSecurity
 public class WebSecurityConfig {
 
+    private final CustomUserDetailsService userDetailsService;
+
+    public WebSecurityConfig(CustomUserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 // Configurar CORS
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
-                // Deshabilitar CSRF para APIs REST
+                // Deshabilitar CSRF para APIs REST (necesario para peticiones desde Angular)
                 .csrf(csrf -> csrf.disable())
 
                 // Configurar autorización de requests
                 .authorizeHttpRequests(auth -> auth
-                        // MODO DESARROLLO: Permitir todas las rutas
-                        // Cuando implementes JWT, cambia esto a roles específicos
+                        // MODO DESARROLLO: Todas las rutas son públicas
                         .anyRequest().permitAll()
 
-                        /* CONFIGURACIÓN PARA PRODUCCIÓN CON JWT:
-                        .requestMatchers("/auth/**", "/usuarios/create", "/eventos").permitAll()
-                        .requestMatchers("/usuarios/**", "/eventos/**", "/boletos/**").hasRole("ADMIN")
-                        .requestMatchers("/api/compras/**").authenticated()
-                        .anyRequest().authenticated()
+                        /* PARA PRODUCCIÓN - Descomentar esto y comentar anyRequest().permitAll()
+                        // Rutas públicas
+                        .requestMatchers("/auth/**", "/usuarios/create", "/eventos/**", "/tipo-evento/**",
+                                        "/estado-evento/**", "/organizador/**", "/ubicacion/**").permitAll()
+
+                        // Rutas admin - solo ADMINISTRADOR
+                        .requestMatchers("/usuarios/**", "/boletos/**").hasAnyRole("ADMINISTRADOR", "ADMIN")
+
+                        // Rutas de compras - requiere autenticación
+                        .requestMatchers("/api/compras/**", "/ventas/**").authenticated()
                         */
                 )
 
-                // Deshabilitar formLogin
+                // Deshabilitar formLogin (no usamos formularios de login)
                 .formLogin(form -> form.disable())
 
-                // Deshabilitar httpBasic
+                // Deshabilitar httpBasic (no usamos autenticación básica HTTP)
                 .httpBasic(basic -> basic.disable())
 
-                // Política de sesiones STATELESS
+                // IMPORTANTE: Cambiamos a sesiones con estado para mantener la autenticación
+                // Cuando implementes JWT, vuelve a cambiar a STATELESS
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 );
 
         return httpSecurity.build();
@@ -88,5 +101,18 @@ public class WebSecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    /**
+     * Bean para manejar la autenticación de usuarios
+     */
+    @Bean
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder authenticationManagerBuilder =
+            http.getSharedObject(AuthenticationManagerBuilder.class);
+        authenticationManagerBuilder
+            .userDetailsService(userDetailsService)
+            .passwordEncoder(passwordEncoder());
+        return authenticationManagerBuilder.build();
     }
 }

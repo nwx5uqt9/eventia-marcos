@@ -29,11 +29,13 @@ export class AuthGuard implements CanActivate {
     if (requiredRoles && requiredRoles.length > 0) {
       const userRoleId = currentUser.rolUsuario?.id;
 
+      // Solo verificar por ID de rol
+      // Roles: 1 = ADMIN, 2 = CLIENTE, 3 = ORGANIZADOR
       if (requiredRoles.includes(userRoleId)) {
-        console.log('Acceso permitido - Rol válido:', userRoleId);
+        console.log('acceso permitido', userRoleId);
         return true;
       } else {
-        console.log('Acceso denegado - Rol insuficiente:', userRoleId);
+        console.log('acceso denegado ', userRoleId);
         // Redirigir según el rol del usuario
         this.redirectByRole(userRoleId);
         return false;
@@ -44,16 +46,13 @@ export class AuthGuard implements CanActivate {
     return true;
   }
 
-  private redirectByRole(rolId: number | null | undefined): void {
-    switch(rolId) {
-      case 1: // Administrador
-        this.router.navigate(['/admin/events']);
-        break;
-      case 2: // Organizador
-      case 3: // Cliente
-      default:
-        this.router.navigate(['/client/events']);
-        break;
+  private redirectByRole(rolId: number): void {
+    // Solo ADMIN (id: 2) va a /admin/users
+    // Todos los demás (id: 1, 3, etc.) van a /client/events
+    if (rolId === 2) {
+      this.router.navigate(['/admin/users']);
+    } else {
+      this.router.navigate(['/client/events']);
     }
   }
 }

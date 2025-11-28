@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/usuarios")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 public class UsuarioControlador {
 
     private static final Logger logger = LoggerFactory.getLogger(UsuarioControlador.class);
@@ -41,9 +41,58 @@ public class UsuarioControlador {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Usuario> create(@RequestBody Usuario usuario) {
-        Usuario saved = usuarioServicio.save(usuario);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+    public ResponseEntity<?> create(@RequestBody Usuario usuario) {
+        try {
+            logger.info("=== INICIO CREACIÓN DE USUARIO ===");
+            logger.info("Usuario recibido: {}", usuario.getNombreusuario());
+            logger.info("Email: {}", usuario.getEmail());
+            logger.info("DNI: {}", usuario.getDni());
+            logger.info("Rol Usuario ID: {}", usuario.getRolUsuario() != null ? usuario.getRolUsuario().getId() : "NULL");
+
+            // Validar que el rol no sea null
+            if (usuario.getRolUsuario() == null || usuario.getRolUsuario().getId() == null) {
+                logger.error("El rol de usuario es NULL o no tiene ID");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ErrorResponse("El rol de usuario es requerido"));
+            }
+
+            logger.info("Iniciando guardado en base de datos...");
+            Usuario saved = usuarioServicio.save(usuario);
+            logger.info("Usuario creado exitosamente con ID: {}", saved.getId());
+            logger.info("=== FIN CREACIÓN DE USUARIO ===");
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+        } catch (IllegalArgumentException e) {
+            logger.error("Error de validación al crear usuario: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ErrorResponse(e.getMessage()));
+        } catch (Exception e) {
+            logger.error("Error inesperado al crear usuario", e);
+            logger.error("Tipo de excepción: {}", e.getClass().getName());
+            logger.error("Mensaje: {}", e.getMessage());
+            if (e.getCause() != null) {
+                logger.error("Causa raíz: {}", e.getCause().getMessage());
+            }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("Error al crear usuario: " + e.getMessage()));
+        }
+    }
+
+    // Clase interna para respuestas de error
+    private static class ErrorResponse {
+        private String message;
+
+        public ErrorResponse(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
     }
 
     @PutMapping("/{id}")
